@@ -1,0 +1,231 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "tags": {
+      "value": {
+        "project": "fd-avd"
+      }
+    },
+    "resourceGroupNames": {
+      "value": {
+        "monitoring": "rg-monitor",
+        "avdNetworking": "rg-avd",
+        "avd": "rg-avd-hp-data-pool"
+      }
+    },
+    "deploymentFromScratch": {
+      "value": true
+    },
+    "monitoringOptions": {
+      "value": {
+        "newOrExistingLogAnalyticsWorkspaceName": "workspace-demo-base",
+        "diagnosticsStorageAccountName": "sadiagdataavd"
+      }
+    },
+    "roleDefinitions": {
+      "value": {
+        "avdAutoScaleRole": {
+          "name": "AVD Autoscale (Custom)",
+          "description": "This role will allow Windows Virtual Desktop to power manage all VMs in this subscription.",
+          "actions": [
+            "Microsoft.Insights/eventtypes/values/read",
+            "Microsoft.Compute/virtualMachines/deallocate/action",
+            "Microsoft.Compute/virtualMachines/restart/action",
+            "Microsoft.Compute/virtualMachines/powerOff/action",
+            "Microsoft.Compute/virtualMachines/start/action",
+            "Microsoft.Compute/virtualMachines/read",
+            "Microsoft.DesktopVirtualization/hostpools/read",
+            "Microsoft.DesktopVirtualization/hostpools/write",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/read",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/write",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/delete",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/read",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/sendMessage/action",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/read"
+          ],
+          "principalId": "26da2792-4d23-4313-b9e7-60bd7c1bf0b1"
+        },
+        "avdStartOnConnectRole": {
+          "name": "AVD Start VM on connect (Custom)",
+          "description": "Start VM on connect with AVD (Custom)",
+          "actions": [
+            "Microsoft.Compute/virtualMachines/start/action",
+            "Microsoft.Compute/virtualMachines/*/read"
+          ],
+          "principalId": "26da2792-4d23-4313-b9e7-60bd7c1bf0b1"
+        }
+      }
+    },
+    "vmConfiguration": {
+      "value": {
+        "prefixName": "vmshdatapd",
+        "diskType": "Standard_LRS",
+        "aadLogin": false,
+        "sku": "Standard_DS3_V2",
+        "redundancy": "availabilityZone",
+        "availabilityZones": [1,2,3],
+        "adminUsername": "azureAdmin",
+        "image": {
+          "imageId": "/subscriptions/6ec2c6df-fdd8-4d3e-99b7-ad64629a7bae/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/gallery/images/WVD10_Pool_Definition/versions/1.0.0",
+          "imageOffer": "Windows-10",
+          "imageSKU": "20h2-evd",
+          "imagePublisher": "MicrosoftWindowsDesktop",
+          "imageVersion": "latest"
+        },
+        "domainConfiguration": {
+          "name": "mydomain.local",
+          "ouPath": "OU=Pooled,OU=AVD,DC=mydomain,DC=local",
+          "vmJoinUserName": "azureAdmin"
+        },
+        "networkConfiguration": {
+          "vnetName": "vnet-avd",
+          "subnetName": "snet-hp-data-pool"
+        },
+        "hostPoolRegistration": {
+          "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
+        }
+      }
+    },
+    "avdConfiguration": {
+      "value": {
+        "placeholderWorkSpace": {
+          "name": "ws-placeholder",
+          "deployDiagnostics": true,
+          "existingApplicationGroupIds": []
+        },
+        "workSpace": {
+          "name": "ws-avd-datapool",
+          "deployDiagnostics": true,
+          "existingApplicationGroupIds": []
+        },
+        "hostPool": {
+          "addHosts": true,
+          "name": "hp-data-pool",
+          "instances": 1,
+          "currentInstances": 0,
+          "type": "Pooled",
+          "assignmentType": "Automatic",
+          "maxSessions": 10,
+          "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
+          "tokenExpirationTime": "02/15/2022 8:55:50 AM",
+          "scalePlan": {
+            "enabled": false,
+            "name": "sp-hp-data-pool",
+            "timeZone": "Romance Standard Time",
+            "exclusionTag": "",
+            "schedules": [
+              {
+                "name": "weekdays_schedule",
+                "daysOfWeek": [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "rampUpStartTime": "08:00",
+                "rampUpLoadBalancingAlgorithm": "BreadthFirst",
+                "rampUpMinimumHostsPct": 20,
+                "rampUpCapacityThresholdPct": 60,
+                "peakStartTime": "09:00",
+                "peakLoadBalancingAlgorithm": "BreadthFirst",
+                "rampDownStartTime": "18:00",
+                "rampDownLoadBalancingAlgorithm": "BreadthFirst",
+                "rampDownMinimumHostsPct": 10,
+                "rampDownCapacityThresholdPct": 10,
+                "rampDownWaitTimeMinutes": 30,
+                "rampDownStopHostsWhen": "ZeroSessions",
+                "rampDownNotificationMessage": "You will be logged off in 30 min. Make sure to save your work.",
+                "offPeakStartTime": "19:00",
+                "offPeakLoadBalancingAlgorithm": "DepthFirst",
+                "rampDownForceLogoffUsers": true
+              }
+            ]
+          },
+          "apps": [
+            {
+              "remoteAppApplicationName": "Word",
+              "applicationType": "Inbuilt",
+              "description": "Word",
+              "filePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+              "friendlyName": "Word",
+              "iconIndex": 0,
+              "iconPath": "C:\\Program Files\\Microsoft Office\\Root\\VFS\\Windows\\Installer\\{90160000-000F-0000-1000-0000000FF1CE}\\wordicon.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "Paint",
+              "applicationType": "InBuilt",
+              "description": "Paint",
+              "filePath": "C:\\Windows\\system32\\mspaint.exe",
+              "friendlyName": "Paint",
+              "iconIndex": 0,
+              "iconPath": "C:\\Windows\\system32\\mspaint.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "Remote Desktop Connection",
+              "applicationType": "InBuilt",
+              "description": "Remote Desktop Connection",
+              "filePath": "C:\\Windows\\system32\\mstsc.exe",
+              "friendlyName": "Remote Desktop Connection",
+              "iconIndex": 0,
+              "iconPath": "C:\\Windows\\system32\\mstsc.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "Microsoft Edge",
+              "applicationType": "InBuilt",
+              "description": "Microsoft Edge",
+              "filePath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+              "friendlyName": "Microsoft Edge",
+              "iconIndex": 0,
+              "iconPath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "Notepad",
+              "applicationType": "InBuilt",
+              "description": "Notepad",
+              "filePath": "C:\\Windows\\system32\\notepad.exe",
+              "friendlyName": "Notepad",
+              "iconIndex": 0,
+              "iconPath": "C:\\Windows\\system32\\notepad.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "WordPad",
+              "applicationType": "InBuilt",
+              "description": "WordPad",
+              "filePath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
+              "friendlyName": "WordPad",
+              "iconIndex": 0,
+              "iconPath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
+              "showInPortal": true
+            },
+            {
+              "remoteAppApplicationName": "Power BI Desktop",
+              "applicationType": "InBuilt",
+              "description": "Power BI Desktop",
+              "filePath": "C:\\Program Files\\Microsoft Power BI Desktop\\bin\\PBIDesktop.exe",
+              "friendlyName": "Power BI Desktop",
+              "iconIndex": 0,
+              "iconPath": "C:\\Windows\\Installer\\{6c273ae4-a5d9-4efb-aa50-c4d3d79d03fb}\\IconPowerBI",
+              "showInPortal": true
+            }
+          ]
+        },
+        "monitoring": {
+          "deployWorkspaceDiagnostics": true,
+          "deployHostPoolDiagnostics": true,
+          "deployDesktopDiagnostics": true,
+          "deployRemoteAppDiagnostics": true
+        }
+      }
+    }
+  }
+}

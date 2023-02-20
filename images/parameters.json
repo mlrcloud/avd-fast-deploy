@@ -1,0 +1,207 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "location": {
+        "value": "westeurope"
+      },
+      "tags": {
+        "value": {
+          "project": "fd-avd"
+        }
+      },
+      "resourceGroupNames": {
+        "value": {
+          "images": "rg-images"
+        }
+      },
+      "roleDefinitions": {
+        "value": {
+          "imageBuilderRole": {
+            "name": "Image Builder (Custom)",
+            "description": "This role will allow Image Builder to read/write images, read in scripts from Azure Storage",
+            "actions": [
+              "Microsoft.Compute/galleries/read",
+              "Microsoft.Compute/galleries/images/read",
+              "Microsoft.Compute/galleries/images/versions/read",
+              "Microsoft.Compute/galleries/images/versions/write",
+              "Microsoft.Compute/images/read",
+              "Microsoft.Compute/images/write",
+              "Microsoft.Compute/images/delete"
+            ]
+          },
+          "avdDeploymentScriptRole": {
+            "name": "Deployment Script for AVD Images (Custom)",
+            "description": "This role will allow Deployment Script Managed Identity to run image build action",
+            "actions": [
+              "Microsoft.VirtualMachineImages/imageTemplates/run/action"
+            ]
+          }
+        }
+      },
+      "galleryProperties": {
+        "value": {
+          "name": "gallery",
+          "softDelete": false
+        }
+      },
+      "updateImageTemplate": {
+        "value": true
+      },
+      "imagesInfo": {
+        "value": {
+          "wvd10-pers": {
+            "imageDefinitionProperties": {
+              "name": "WVD10_Pers_Definition",
+              "offer": "Windows-10",
+              "publisher": "MicrosoftWindowsDesktop",
+              "sku": "20h2-ent",
+              "vmGeneration": "V1"        
+            },
+            "imageTemplateProperties": {
+              "name": "WVD10Pers-Temp-0223",
+              "source" : {
+                "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsDesktop",
+                "offer": "windows-10",
+                "sku": "20h2-ent",
+                "version": "latest"
+              },
+              "customize": [
+                {
+                  "type": "PowerShell",
+                  "name": "OptimizeOS",
+                  "runElevated": true,
+                  "runAsSystem": true,
+                  "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/1_Optimize_OS_for_WVD.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "write-host 'restarting post Optimizations'",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "PowerShell",
+                  "name": "Install Teams",
+                  "runElevated": true,
+                  "runAsSystem": true,
+                  "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/2_installTeams.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "write-host 'restarting post Teams Install'",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "WindowsUpdate",
+                  "searchCriteria": "IsInstalled=0",
+                  "filters": [
+                    "exclude:$_.Title -like '*Preview*'",
+                    "include:$true"
+                  ],
+                  "updateLimit": 40
+                }
+              ],
+              "version": "1.0.0",
+              "runOutputName": "WVD10-Pers-CustomImage",
+              "artifactTags": {
+                "sourceimage": "wvd-10",
+                "baseosimage": "windows-10"
+              },
+              "replicationRegions": [
+                "westeurope",
+                "northeurope"
+              ]
+            }
+          },
+          "wvd10-pool": {
+            "imageDefinitionProperties": {
+              "name": "WVD10_Pool_Definition",
+              "offer": "Windows-10",
+              "publisher": "MicrosoftWindowsDesktop",
+              "sku": "20h2-evd",
+              "vmGeneration": "V1"        
+            },
+            "imageTemplateProperties": {
+              "name": "WVD10Pool-Temp-0223",
+              "source" : {
+                "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsDesktop",
+                "offer": "windows-10",
+                "sku": "20h2-evd",
+                "version": "latest"
+              },
+              "customize": [
+                
+                {
+                  "type": "PowerShell",
+                  "name": "CreateBuildPath",
+                  "scriptUri": "https://raw.githubusercontent.com/TomHickling/AzureImageBuilder/master/AIBWin10MSImageBuildTeamMedia.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\temp\\buildArtifacts\\azureImageBuilderRestart.txt",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "PowerShell",
+                  "name": "installFsLogix",
+                  "runElevated": true,
+                  "runAsSystem": true,
+                  "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/0_installConfFsLogix.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\temp\\buildArtifacts\\azureImageBuilderRestart.txt",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "PowerShell",
+                  "name": "OptimizeOS",
+                  "runElevated": true,
+                  "runAsSystem": true,
+                  "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/1_Optimize_OS_for_WVD.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "write-host 'restarting post Optimizations'",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "PowerShell",
+                  "name": "Install Teams",
+                  "runElevated": true,
+                  "runAsSystem": true,
+                  "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/2_installTeams.ps1"
+                },
+                {
+                  "type": "WindowsRestart",
+                  "restartCheckCommand": "write-host 'restarting post Teams Install'",
+                  "restartTimeout": "5m"
+                },
+                {
+                  "type": "WindowsUpdate",
+                  "searchCriteria": "IsInstalled=0",
+                  "filters": [
+                    "exclude:$_.Title -like '*Preview*'",
+                    "include:$true"
+                  ],
+                  "updateLimit": 40
+                }
+              ],
+              "version": "1.0.0",
+              "runOutputName": "WVD10-Pool-CustomImage",
+              "artifactTags": {
+                "sourceimage": "wvd-10",
+                "baseosimage": "windows-10"
+              },
+              "replicationRegions": [
+                "westeurope",
+                "northeurope"
+              ]
+            }
+          }  
+        } 
+      }
+  }
+}

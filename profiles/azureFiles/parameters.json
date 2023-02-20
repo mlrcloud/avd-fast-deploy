@@ -1,0 +1,83 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "tags": {
+      "value": {
+        "project": "fd-avd"
+      }
+    },
+    "resourceGroupNames": {
+      "value": {
+        "monitoring": "rg-monitor",
+        "avd": "rg-avd",
+        "centralDns": "rg-shared",
+        "azFilesProfiles": "rg-azfilesprofiles"
+      }
+    },
+    "hostPoolName": {
+      "value": "hpdatapers"
+    },
+    "storageAccountInfo": {
+      "value": {
+          "prefix": "saprofiles",
+          "sku": "Standard_LRS",
+          "kind": "StorageV2",
+          "privateEndpointName": "plink-blob-profiles"
+        }
+      },
+    "profilesInfo": {
+      "value": {
+        "fileShareName": "profiles",
+        "fileShareTier": "Hot",
+        "snetName": "snet-profile-shares"
+      }
+    },
+    "centralDnsExists": {
+      "value": true
+    },
+    "vnets": {
+      "value": {
+        "avd": "vnet-avd",
+        "centraldns": "vnet-shared"
+      }
+    },
+    "joinerServerConfiguration": {
+      "value": {
+        "vmName": "vmjoiner",
+        "vmDiskType": "Standard_LRS",
+        "aadLogin": false,
+        "vmSku": "Standard_DS2_V2",
+        "vmRedundancy": "availabilityZones",
+        "vmAzNumber": 1,
+        "vmAdminUsername": "azureAdmin",
+        "vmImage": {
+          "imageId": "",
+          "imageOffer": "WindowsServer",
+          "imageSKU": "2019-Datacenter",
+          "imagePublisher": "MicrosoftWindowsServer",
+          "imageVersion": "latest"
+        },
+        "domainConfiguration": {
+          "name": "mydomain.local",
+          "ouPath": "OU=Pooled,OU=AVD,DC=mydomain,DC=local",
+          "vmJoinUserName": "azureAdmin"
+        },
+        "networkConfiguration": {
+          "vnetName": "vnet-avd",
+          "snetName": "snet-profile-shares",
+          "nicName": "nic-vmjoiner"
+        }
+      }
+    },
+    "monitoringOptions": {
+      "value": {
+        "newOrExistingLogAnalyticsWorkspaceName": "workspace-dev-base",
+        "diagnosticsStorageAccountName": "sadiagnosticdataavd"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+on: [push]
+name: Pooled AVD deployment
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      deploymentPrefix: AVD-Data-Pooled
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        region: westeurope
+        template: ./avd/main.bicep
+        parameters: ./avd/parameters.pooled.bicep location=westeurope
+        deploymentName: ${{ env.deploymentPrefix }}-Deployment
+        failOnStdErr: false

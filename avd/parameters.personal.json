@@ -1,0 +1,132 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "tags": {
+      "value": {
+        "project": "fd-avd"
+      }
+    },
+    "resourceGroupNames": {
+      "value": {
+        "monitoring": "rg-monitor",
+        "avdNetworking": "rg-avd",
+        "avd": "rg-avd-hp-data-pers"
+      }
+    },
+    "deploymentFromScratch": {
+      "value": true
+    },
+    "monitoringOptions": {
+      "value": {
+        "newOrExistingLogAnalyticsWorkspaceName": "workspace-dev-base",
+        "diagnosticsStorageAccountName": "sadiagdataavd"
+      }
+    },
+    "roleDefinitions": {
+      "value": {
+        "avdAutoScaleRole": {
+          "name": "AVD Autoscale (Custom)",
+          "description": "This role will allow Windows Virtual Desktop to power manage all VMs in this subscription.",
+          "actions": [
+            "Microsoft.Insights/eventtypes/values/read",
+            "Microsoft.Compute/virtualMachines/deallocate/action",
+            "Microsoft.Compute/virtualMachines/restart/action",
+            "Microsoft.Compute/virtualMachines/powerOff/action",
+            "Microsoft.Compute/virtualMachines/start/action",
+            "Microsoft.Compute/virtualMachines/read",
+            "Microsoft.DesktopVirtualization/hostpools/read",
+            "Microsoft.DesktopVirtualization/hostpools/write",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/read",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/write",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/delete",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/read",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/sendMessage/action",
+            "Microsoft.DesktopVirtualization/hostpools/sessionhosts/usersessions/read"
+          ],
+          "principalId": "26da2792-4d23-4313-b9e7-60bd7c1bf0b1"
+        },
+        "avdStartOnConnectRole": {
+          "name": "AVD Start VM on connect (Custom)",
+          "description": "Start VM on connect with AVD (Custom)",
+          "actions": [
+            "Microsoft.Compute/virtualMachines/start/action",
+            "Microsoft.Compute/virtualMachines/*/read"
+          ],
+          "principalId": "26da2792-4d23-4313-b9e7-60bd7c1bf0b1"
+        }
+      }
+    },
+    "vmConfiguration": {
+      "value": {
+        "prefixName": "vmshdataps",
+        "diskType": "Standard_LRS",
+        "aadLogin": true,
+        "sku": "Standard_DS3_V2",
+        "redundancy": "availabilityZone",
+        "availabilityZones": [1,2,3],
+        "adminUsername": "azureAdmin",
+        "image": {
+          "imageId": "/subscriptions/6ec2c6df-fdd8-4d3e-99b7-ad64629a7bae/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/gallery/images/WVD10_Pers_Definition/versions/1.0.0",
+          "imageOffer": "Windows-10",
+          "imageSKU": "20h2-ent",
+          "imagePublisher": "MicrosoftWindowsDesktop",
+          "imageVersion": "latest"
+        },
+        "domainConfiguration": {
+          "name": "mydomain.local",
+          "ouPath": "OU=Personal,OU=AVD,DC=mydomain,DC=local",
+          "vmJoinUserName": "azureAdmin"
+        },
+        "networkConfiguration": {
+          "vnetName": "vnet-avd",
+          "subnetName": "snet-hp-data-pers"
+        },
+        "hostPoolRegistration": {
+          "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
+        }
+      }
+    },
+    "avdConfiguration": {
+      "value": {
+        "placeholderWorkSpace": {
+          "name": "ws-placeholder",
+          "deployDiagnostics": true
+        },
+        "workSpace": {
+          "name": "ws-avd-datapers",
+          "deployDiagnostics": true
+        },
+        "hostPool": {
+          "addHosts": true,
+          "name": "hp-data-pers",
+          "instances": 1,
+          "currentInstances": 0,
+          "type": "Personal",
+          "assignmentType": "Automatic",
+          "maxSessions": 10,
+          "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
+          "tokenExpirationTime": "02/11/2023 8:55:50 AM",
+          "scalePlan": {
+            "enabled": false,
+            "name": "NA",
+            "timeZone": "NA",
+            "exclusionTag": "",
+            "schedules": []
+          },
+          "existingApplicationGroupIds": [],
+          "apps": []
+        },
+        "monitoring": {
+          "deployWorkspaceDiagnostics": true,
+          "deployHostPoolDiagnostics": true,
+          "deployDesktopDiagnostics": true,
+          "deployRemoteAppDiagnostics": true
+        }
+      }
+    }
+  }
+}
