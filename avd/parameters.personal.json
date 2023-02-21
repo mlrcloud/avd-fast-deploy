@@ -22,7 +22,7 @@
     },
     "monitoringOptions": {
       "value": {
-        "newOrExistingLogAnalyticsWorkspaceName": "workspace-dev-base",
+        "newOrExistingLogAnalyticsWorkspaceName": "law-demo",
         "diagnosticsStorageAccountName": "sadiagdataavd"
       }
     },
@@ -92,16 +92,27 @@
     },
     "avdConfiguration": {
       "value": {
-        "placeholderWorkSpace": {
-          "name": "ws-placeholder",
-          "deployDiagnostics": true
-        },
-        "workSpace": {
-          "name": "ws-avd-datapers",
-          "deployDiagnostics": true
+        "workspaces": {
+          "placeholderWorkSpace": {
+            "name": "ws-placeholder",
+            "deployPrivateLink": true,
+            "privateEndpointName": "plink-global-ws",
+            "groupId": "global",
+            "subnetName": "snet-avd-pl",
+            "deployDiagnostics": true,
+            "existingApplicationGroupIds": []
+          },
+          "feedWorkSpace": {
+            "name": "ws-avd-datapers",
+            "privateEndpointName": "plink-ws-avd-datapers",
+            "groupId": "feed",
+            "subnetName": "snet-avd-pl",
+            "deployDiagnostics": true,
+            "existingApplicationGroupIds": []
+          }
         },
         "hostPool": {
-          "addHosts": true,
+          "addHosts": false,
           "name": "hp-data-pers",
           "instances": 1,
           "currentInstances": 0,
@@ -109,7 +120,7 @@
           "assignmentType": "Automatic",
           "maxSessions": 10,
           "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
-          "tokenExpirationTime": "02/11/2023 8:55:50 AM",
+          "tokenExpirationTime": "02/22/2023 8:55:50 AM",
           "scalePlan": {
             "enabled": false,
             "name": "NA",

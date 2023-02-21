@@ -69,8 +69,18 @@ param avdConfiguration object
 param deploymentFromScratch bool
 var newScenario = deploymentFromScratch
 
-var newOrExistingWorkspaceName = avdConfiguration.workSpace.name
-var placeholderWorkspaceName = avdConfiguration.placeholderWorkspace.name
+var newOrExistingWorkspaceName = avdConfiguration.workspaces.feedWorkSpace.name
+var workspacePrivateEndpointName = avdConfiguration.workSpace.privateEndpointName
+var groupIdWorkspace = avdConfiguration.workSpace.groupId
+
+
+// Azure Virtual Desktop Private Link Configuration
+
+var avdPrivateLinkEnabled = avdConfiguration.avdPrivateLink.deployPrivateLink
+var placeholderWorkspaceName = avdConfiguration.avdPrivateLink.placeholderWorkspace.name
+var placeholderWorkspacePrivateEndpointName = avdConfiguration.avdPrivateLink.placeholderWorkspace.privateEndpointName
+var groupIdPlaceholderWorkspace = avdConfiguration.avdPrivateLink.placeholderWorkspace.groupId
+var deployPlaceholderWorkspaceDiagnostic = avdConfiguration.avdPrivateLink.placeholderWorkspace.deployDiagnostics
 
 // Azure Virtual Desktop Pool Configuration
 
@@ -138,8 +148,14 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
   params: {
     location: location
     tags: tags
+    avdPrivateLinkEnabled: avdPrivateLinkEnabled
     placeholderWorkspaceName: placeholderWorkspaceName
+    placeholderWorkspacePrivateEndpointName: placeholderWorkspacePrivateEndpointName
+    groupIdPlaceholderWorkspace: groupIdPlaceholderWorkspace
+    deployPlaceholderWorkspaceDiagnostic: deployPlaceholderWorkspaceDiagnostic
     newOrExistingWorkspaceName: newOrExistingWorkspaceName
+    workspacePrivateEndpointName: workspacePrivateEndpointName
+    groupIdWorkspace: groupIdWorkspace
     deployWorkspaceDiagnostic: deployWorkspaceDiagnostic
     hostPoolName: hostPoolName
     hostPoolFriendlyName: hostPoolFriendlyName

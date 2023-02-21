@@ -12,6 +12,8 @@ param monitoringResourceGroupName string
 
 // avdResources Parameters
 param newOrExistingWorkspaceName string
+param workspacePrivateEndpointName string
+param groupIdWorkspace string
 param deployWorkspaceDiagnostic bool = true
 param tokenExpirationTime string
 param hostPoolType string 
@@ -34,33 +36,33 @@ param exclusionTag string
 
 
 param existingApplicationGroupIds array = []
-
 param deployDesktopApplicationGroupDiagnostic bool = true
 param deployRemoteAppApplicationGroupDiagnostic bool = true
-
-
 param desktopApplicationGroupName string
 param remoteAppApplicationGroupName string
-
-
 param appsListInfo array
 
-
+// privatelinkResources
+param avdPrivateLinkEnabled bool
 param placeholderWorkspaceName string
+param placeholderWorkspacePrivateEndpointName string
+param deployPlaceholderWorkspaceDiagnostic bool
+param groupIdPlaceholderWorkspace string
 
 // monitoringResources
 param logWorkspaceName string
 
+
+// Variables
 var desktopApplicationGroupFriendlyName = '${hostPoolName}-dag'
 var remoteAppApplicationGroupFriendlyName = '${hostPoolName}-rag'
-
 var desktopApplicationGroupId = array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', desktopApplicationGroupName))
 var remoteAppApplicationGroupId = hostPoolType != 'Pooled' ? [] : array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', remoteAppApplicationGroupName))
 var applicationGroupIds = union(existingApplicationGroupIds,desktopApplicationGroupId,remoteAppApplicationGroupId)
-
 var descriptionPersonalAppGroup = 'Desktop Application Group created through the Hostpool Wizard'
 var descriptionPooledAppGroup = 'Remote App Application Group created through the Hostpool Wizard'
 
+// Resources
 
 module hostPoolResources '../../modules/Microsoft.DesktopVirtualization/hostPool.bicep' = {
   name: 'hostPoolRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
@@ -157,20 +159,6 @@ module remoteAppApplicationsResources '../../modules/Microsoft.DesktopVirtualiza
   }
 }]
 
-
-module placeholderWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = {
-  name: 'placeholderWorkspaceRss_Deploy'
-  params: {
-    location: location
-    tags: tags
-    name: placeholderWorkspaceName
-    logWorkspaceName: logWorkspaceName
-    monitoringResourceGroupName: monitoringResourceGroupName
-    deployDiagnostic: deployWorkspaceDiagnostic
-    applicationGroupIds: [] //placeholder workspace does not required application groups. It must be an unused placeholder workspace to terminate the global endpoint.
-  }
-}
-
 module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = {
   name: 'workspaceRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
   dependsOn: [
@@ -189,4 +177,36 @@ module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspa
   }
 }
 
+module placeholderWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = if (avdPrivateLinkEnabled) {
+  name: 'placeholderWorkspaceRss_Deploy'
+  params: {
+    location: location
+    tags: tags
+    name: placeholderWorkspaceName
+    logWorkspaceName: logWorkspaceName
+    monitoringResourceGroupName: monitoringResourceGroupName
+    deployDiagnostic: deployPlaceholderWorkspaceDiagnostic
+    applicationGroupIds: [] //placeholder workspace does not required application groups. It must be an unused placeholder workspace to terminate the global endpoint.
+  }
+}
+
+
+module workspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = [for i in range(0, length(snetsInfo)): if (snetsInfo[i].name == 'snet-plinks') {
+  name: '${i}WorkspacePrivateEndpointResources_Deploy'
+  dependsOn: [
+    placeholderWorkspaceResources
+    workspaceResources
+  ]
+  params: {
+    location: location
+    tags: tags
+    name: blobStorageAccountPrivateEndpointName
+    vnetName: vnetName
+    snetName: snetName
+    workspaceName: storageAccountName
+    privateDnsZoneName: blobPrivateDnsZoneName
+    groupIds: i
+    sharedResourceGroupName: sharedResourceGroupName
+  }
+}]
 

@@ -22,7 +22,7 @@
     },
     "monitoringOptions": {
       "value": {
-        "newOrExistingLogAnalyticsWorkspaceName": "workspace-demo-base",
+        "newOrExistingLogAnalyticsWorkspaceName": "law-demo",
         "diagnosticsStorageAccountName": "sadiagdataavd"
       }
     },
@@ -92,10 +92,12 @@
     },
     "avdConfiguration": {
       "value": {
-        "placeholderWorkSpace": {
-          "name": "ws-placeholder",
-          "deployDiagnostics": true,
-          "existingApplicationGroupIds": []
+        "avdPrivateLink": {
+          "deployPrivateLink": true,
+          "placeholderWorkSpace": {
+            "name": "ws-placeholder",
+            "deployDiagnostics": true
+          }
         },
         "workSpace": {
           "name": "ws-avd-datapool",
