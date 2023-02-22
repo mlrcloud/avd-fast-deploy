@@ -14,7 +14,8 @@
       "value": {
         "monitoring": "rg-monitor",
         "avdNetworking": "rg-avd",
-        "avd": "rg-avd-hp-data-pers"
+        "avd": "rg-avd-hp-data-pers",
+        "shared": "rg-shared"
       }
     },
     "deploymentFromScratch": {
@@ -85,7 +86,7 @@
           "vnetName": "vnet-avd",
           "subnetName": "snet-hp-data-pers"
         },
-        "hostPoolRegistration": {
+        "hostpoolRegistration": {
           "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
         }
       }
@@ -96,25 +97,31 @@
           "placeholderWorkspace": {
             "deployWorkspace": true,
             "name": "ws-placeholder",
-            "deployPrivateLink": true,
-            "privateEndpointName": "plink-global-ws",
-            "groupId": "global",
-            "subnetName": "snet-avd-pl",
             "deployDiagnostics": true,
-            "existingApplicationGroupIds": []
+            "existingApplicationGroupIds": [],
+            "privateLink": {
+              "deployPrivateLink": true,
+              "privateEndpointName": "plink-global-ws",
+              "privateDnsZone": "privatelink.wvd.microsoft.com",
+              "groupId": "global",
+              "subnetName": "snet-avd-pl"
+            }
           },
           "feedWorkspace": {
             "deployWorkspace": true,
             "name": "ws-avd-datapers",
-            "deployPrivateLink": true,
-            "privateEndpointName": "plink-ws-avd-datapers",
-            "groupId": "feed",
-            "subnetName": "snet-avd-pl",
             "deployDiagnostics": true,
-            "existingApplicationGroupIds": []
+            "existingApplicationGroupIds": [],
+            "privateLink": {
+              "deployPrivateLink": true,
+              "privateEndpointName": "plink-ws-avd-datapers",
+              "privateDnsZone": "privatelink.wvd.microsoft.com",
+              "groupId": "feed",
+              "subnetName": "snet-avd-pl"
+            }
           }
         },
-        "hostPool": {
+        "hostpool": {
           "addHosts": false,
           "name": "hp-data-pers",
           "instances": 1,
@@ -132,7 +139,14 @@
             "schedules": []
           },
           "existingApplicationGroupIds": [],
-          "apps": []
+          "apps": [],
+          "privateLink": {
+            "deployPrivateLink": true,
+            "privateEndpointName": "plink-hp-avd-datapers",
+            "privateDnsZone": "privatelink.wvd.microsoft.com",
+            "groupId": "connection",
+            "subnetName": "snet-avd-pl"
+          }
         },
         "monitoring": {
           "deployWorkspaceDiagnostics": true,

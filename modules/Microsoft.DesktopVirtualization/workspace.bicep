@@ -5,6 +5,7 @@ param monitoringResourceGroupName string
 param name string
 param deployDiagnostics bool 
 param applicationGroupIds array
+param publicNetworkAccess string
 
 
 resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
@@ -13,12 +14,13 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' exis
 }
 
 
-resource workspace 'Microsoft.DesktopVirtualization/workspaces@2019-12-10-preview' = {
+resource workspace 'Microsoft.DesktopVirtualization/workspaces@2022-10-14-preview' = {
   name: name
   location: location
   tags: tags
   properties: {
     applicationGroupReferences: applicationGroupIds
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 

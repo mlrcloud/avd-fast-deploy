@@ -85,7 +85,7 @@
           "vnetName": "vnet-avd",
           "subnetName": "snet-hp-data-pool"
         },
-        "hostPoolRegistration": {
+        "hostpoolRegistration": {
           "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
         }
       }
@@ -104,7 +104,7 @@
           "deployDiagnostics": true,
           "existingApplicationGroupIds": []
         },
-        "hostPool": {
+        "hostpool": {
           "addHosts": true,
           "name": "hp-data-pool",
           "instances": 1,

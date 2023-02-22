@@ -13,6 +13,7 @@ param tags object
 param resourceGroupNames object
 
 var monitoringResourceGroupName = resourceGroupNames.monitoring
+var sharedResourceGroupName = resourceGroupNames.shared
 var networkAvdResourceGroupName = resourceGroupNames.avdNetworking
 var avdResourceGroupName = resourceGroupNames.avd
 
@@ -68,7 +69,26 @@ param avdConfiguration object
 
 param deploymentFromScratch bool
 var newScenario = deploymentFromScratch
-var avdWorkspaces = avdConfiguration.workspaces
+var placeholderWorkspaceName = avdConfiguration.workspaces.placeholderWorkspace.Name
+var deployPlaceholderWorkspace = avdConfiguration.workspaces.placeholderWorkspace.deployWorkspace
+var deployPlaceholderWorkspacePrivateLink = avdConfiguration.workspaces.placeholderWorkspace.privateLink.deployPrivateLink
+var placeholderWorkspacePrivateEndpointName = avdConfiguration.workspaces.placeholderWorkspace.privateLink.privateEndpointName
+var placeholderWorkspacePrivateDnsZoneName = avdConfiguration.workspaces.placeholderWorkspace.privateLink.privateDNSZone
+var placeholderWorkspaceGroupId = avdConfiguration.workspaces.placeholderWorkspace.privateLink.groupId
+var placeholderWorkspaceSubnetName = avdConfiguration.workspaces.placeholderWorkspace.privateLink.subnetName
+var deployPlaceholderWorkspaceDiagnostics = avdConfiguration.workspaces.placeholderWorkspace.deployDiagnostics
+var existingPlaceholderWorkspaceApplicationGroupIds = avdConfiguration.workspaces.placeholderWorkspace.existingApplicationGroupIds
+
+var feedWorkspaceName = avdConfiguration.workspaces.feedWorkspace.Name
+var deployFeedWorkspace = avdConfiguration.workspaces.feedWorkspace.deployWorkspace
+var deployFeedWorkspacePrivateLink = avdConfiguration.workspaces.feedWorkspace.privateLink.deployPrivateLink
+var feedWorkspacePrivateEndpointName = avdConfiguration.workspaces.feedWorkspace.privateLink.privateEndpointName
+var feedWorkspacePrivateDnsZoneName = avdConfiguration.workspaces.feedWorkspace.privateLink.privateDNSZone
+var feedWorkspaceGroupId = avdConfiguration.workspaces.feedWorkspace.privateLink.groupId
+var feedWorkspaceSubnetName = avdConfiguration.workspaces.feedWorkspace.privateLink.subnetName
+var deployFeedWorkspaceDiagnostics = avdConfiguration.workspaces.feedWorkspace.deployDiagnostics
+var existingFeedWorkspaceApplicationGroupIds = avdConfiguration.workspaces.feedWorkspace.existingApplicationGroupIds
+
 
 // Azure Virtual Desktop Pool Configuration
 
@@ -92,6 +112,15 @@ var remoteAppApplicationGroupName = '${hostPoolName}-rag'
 
 var appsListInfo = avdConfiguration.hostPool.apps
 
+// Azure Virtual Desktop Pool Private Link Configuration
+
+var deployHostPoolPrivateLink = avdConfiguration.hostPool.privateLink.deployPrivateLink
+var hostPoolPrivateEndpointName = avdConfiguration.hostPool.privateLink.privateEndpointName
+var hostPoolPrivateDnsZoneName = avdConfiguration.hostPool.privateLink.privateDNSZone
+var hostPoolGroupId = avdConfiguration.hostPool.privateLink.groupId
+var hostPoolSubnetName = avdConfiguration.hostPool.privateLink.subnetName
+
+
 // Azure Virtual Desktop Scale Plan
 
 var scalingPlanName = avdConfiguration.hostPool.scalePlan.name
@@ -100,9 +129,6 @@ var schedules = avdConfiguration.hostPool.scalePlan.schedules
 var scalingPlanEnabled = avdConfiguration.hostPool.scalePlan.enabled
 var exclusionTag = avdConfiguration.hostPool.scalePlan.exclusionTag
 
-// Azure Virtual Desktop Application Groups Configuration for Feed Workspace
-
-var existingFeedWsApplicationGroupIds = avdConfiguration.workspaces.feedWorkspace.existingApplicationGroupIds
 
 // Azure Virtual Desktop Monitoring Configuration
 
@@ -138,8 +164,28 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
   params: {
     location: location
     tags: tags
+    sharedResourceGroupName: sharedResourceGroupName
     networkAvdResourceGroupName: networkAvdResourceGroupName
-    avdWorkspaces: avdWorkspaces
+    placeholderWorkspaceName: placeholderWorkspaceName
+    deployPlaceholderWorkspace: deployPlaceholderWorkspace
+    deployPlaceholderWorkspacePrivateLink: deployPlaceholderWorkspacePrivateLink
+    placeholderWorkspacePrivateEndpointName: placeholderWorkspacePrivateEndpointName
+    placeholderWorkspacePrivateDnsZoneName: placeholderWorkspacePrivateDnsZoneName
+    placeholderWorkspaceGroupId: placeholderWorkspaceGroupId
+    placeholderWorkspaceVnetName: existingAvdVnetName
+    placeholderWorkspaceSubnetName: placeholderWorkspaceSubnetName
+    deployPlaceholderWorkspaceDiagnostics: deployPlaceholderWorkspaceDiagnostics
+    existingPlaceholderWorkspaceApplicationGroupIds: existingPlaceholderWorkspaceApplicationGroupIds
+    feedWorkspaceName: feedWorkspaceName
+    deployFeedWorkspace: deployFeedWorkspace
+    deployFeedWorkspacePrivateLink: deployFeedWorkspacePrivateLink
+    feedWorkspacePrivateEndpointName: feedWorkspacePrivateEndpointName
+    feedWorkspacePrivateDnsZoneName: feedWorkspacePrivateDnsZoneName
+    feedWorkspaceGroupId: feedWorkspaceGroupId
+    feedWorkspaceVnetName: existingAvdVnetName
+    feedWorkspaceSubnetName: feedWorkspaceSubnetName
+    deployFeedWorkspaceDiagnostics: deployFeedWorkspaceDiagnostics
+    existingFeedWorkspaceApplicationGroupIds: existingFeedWorkspaceApplicationGroupIds
     hostPoolName: hostPoolName
     hostPoolFriendlyName: hostPoolFriendlyName
     logWorkspaceName: logWorkspaceName
@@ -153,7 +199,6 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     schedules: schedules
     scalingPlanEnabled: scalingPlanEnabled
     exclusionTag: exclusionTag
-    existingFeedWsApplicationGroupIds: existingFeedWsApplicationGroupIds
     personalDesktopAssignmentType: personalDesktopAssignmentType
     customRdpProperty: customRdpProperty
     desktopApplicationGroupName: desktopApplicationGroupName
@@ -161,6 +206,12 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     remoteAppApplicationGroupName: remoteAppApplicationGroupName
     deployRemoteAppApplicationGroupDiagnostics: deployRemoteAppApplicationGroupDiagnostics
     appsListInfo: appsListInfo
+    deployHostPoolPrivateLink: deployHostPoolPrivateLink
+    hostPoolPrivateEndpointName: hostPoolPrivateEndpointName
+    hostPoolPrivateDnsZoneName: hostPoolPrivateDnsZoneName
+    hostPoolGroupId: hostPoolGroupId
+    hostPoolVnetName: existingAvdVnetName
+    hostPoolSubnetName: hostPoolSubnetName
   }
 }
 

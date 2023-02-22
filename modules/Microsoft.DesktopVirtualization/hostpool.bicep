@@ -10,6 +10,7 @@ param maxSessionLimit int
 param validationEnvironment bool = true
 param personalDesktopAssignmentType string
 param customRdpProperty string
+param publicNetworkAccess string 
 
 @description('Get string with $((get-date).ToUniversalTime().AddDays(1).ToString(\'yyyy-MM-ddTHH:mm:ss.fffffffZ\'))')
 param tokenExpirationTime string = '7/31/2022 8:55:50 AM'
@@ -22,7 +23,7 @@ resource logWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' exis
 }
 
 
-resource hostPools 'Microsoft.DesktopVirtualization/hostPools@2021-07-12' = {
+resource hostPools 'Microsoft.DesktopVirtualization/hostPools@2022-10-14-preview' = {
   name: name
   location: location
   tags: tags
@@ -44,6 +45,7 @@ resource hostPools 'Microsoft.DesktopVirtualization/hostPools@2021-07-12' = {
       registrationTokenOperation: 'Update'
     }
     vmTemplate: ''
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
@@ -104,4 +106,4 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-pr
 
 
 
-output hostpoolToken string = hostPools.properties.registrationInfo.token
+output hostPoolToken string = hostPools.properties.registrationInfo.token

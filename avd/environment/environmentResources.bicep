@@ -10,18 +10,17 @@ param tags object
 // resourceGroupNames
 param monitoringResourceGroupName string
 param networkAvdResourceGroupName string
+param sharedResourceGroupName string
 
-// avdResources Parameters
-param avdWorkspaces object
+// hostPoolResources Parameters
 param tokenExpirationTime string
 param hostPoolType string 
 param hostPoolName string 
 param hostPoolFriendlyName string
-param deployHostPoolDiagnostics bool = true
+param deployHostPoolDiagnostics bool
 param personalDesktopAssignmentType string 
-param maxSessionLimit int = 12
+param maxSessionLimit int
 
-//param loadBalancerType string = 'BreadthFirst'
 
 
 param customRdpProperty string = 'audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;'
@@ -32,10 +31,40 @@ param schedules array
 param scalingPlanEnabled bool
 param exclusionTag string
 
+// hostPoolResources private link parameters
 
-param existingFeedWsApplicationGroupIds array = []
-param deployDesktopApplicationGroupDiagnostics bool = true
-param deployRemoteAppApplicationGroupDiagnostics bool = true
+param deployHostPoolPrivateLink bool
+param hostPoolPrivateEndpointName string
+param hostPoolPrivateDnsZoneName string
+param hostPoolGroupId string
+param hostPoolVnetName string
+param hostPoolSubnetName string
+
+// workspaceResources
+
+param placeholderWorkspaceName string 
+param deployPlaceholderWorkspace bool 
+param deployPlaceholderWorkspacePrivateLink bool 
+param placeholderWorkspacePrivateEndpointName string 
+param placeholderWorkspacePrivateDnsZoneName string
+param placeholderWorkspaceGroupId string 
+param placeholderWorkspaceVnetName string 
+param placeholderWorkspaceSubnetName string 
+param deployPlaceholderWorkspaceDiagnostics bool 
+param existingPlaceholderWorkspaceApplicationGroupIds array
+param feedWorkspaceName string 
+param deployFeedWorkspace bool 
+param deployFeedWorkspacePrivateLink bool 
+param feedWorkspacePrivateEndpointName string 
+param feedWorkspacePrivateDnsZoneName string
+param feedWorkspaceGroupId string 
+param feedWorkspaceVnetName string 
+param feedWorkspaceSubnetName string 
+param deployFeedWorkspaceDiagnostics bool 
+param existingFeedWorkspaceApplicationGroupIds array 
+
+param deployDesktopApplicationGroupDiagnostics bool
+param deployRemoteAppApplicationGroupDiagnostics bool
 param desktopApplicationGroupName string
 param remoteAppApplicationGroupName string
 param appsListInfo array
@@ -50,7 +79,7 @@ var desktopApplicationGroupFriendlyName = '${hostPoolName}-dag'
 var remoteAppApplicationGroupFriendlyName = '${hostPoolName}-rag'
 var desktopApplicationGroupId = array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', desktopApplicationGroupName))
 var remoteAppApplicationGroupId = hostPoolType != 'Pooled' ? [] : array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', remoteAppApplicationGroupName))
-var feedWsApplicationGroupIds = union(existingFeedWsApplicationGroupIds,desktopApplicationGroupId,remoteAppApplicationGroupId)
+var unionFeedWorkspaceApplicationGroupIds = union(existingFeedWorkspaceApplicationGroupIds,desktopApplicationGroupId,remoteAppApplicationGroupId)
 var descriptionPersonalAppGroup = 'Desktop Application Group created through the Hostpool Wizard'
 var descriptionPooledAppGroup = 'Remote App Application Group created through the Hostpool Wizard'
 
@@ -151,10 +180,22 @@ module remoteAppApplicationsResources '../../modules/Microsoft.DesktopVirtualiza
   }
 }]
 
+module placeholderWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = if (deployPlaceholderWorkspace) {
+  scope: resourceGroup(networkAvdResourceGroupName)
+  name: 'placeholderWorkspaceRss_Deploy'
+  params: {
+    location: location
+    tags: tags
+    name: placeholderWorkspaceName
+    logWorkspaceName: logWorkspaceName
+    monitoringResourceGroupName: monitoringResourceGroupName
+    deployDiagnostics: deployPlaceholderWorkspaceDiagnostics
+    applicationGroupIds: existingPlaceholderWorkspaceApplicationGroupIds
+  }
+}
 
-module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = [for ws in items(avdWorkspaces): if (ws.value.deployWorkspace) {
-  scope: (ws.value.name == 'ws-placeholder') ? resourceGroup(networkAvdResourceGroupName) : resourceGroup()
-  name: (ws.value.name == 'ws-placeholder') ? 'placeholderWorkspaceRss_Deploy' : 'workspaceRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
+module feedWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = if (deployFeedWorkspace) {
+  name: 'workspaceRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
   dependsOn: [
     hostPoolResources
     desktopApplicationGroupResources
@@ -163,34 +204,69 @@ module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspa
   params: {
     location: location
     tags: tags
-    name: ws.value.name
+    name: feedWorkspaceName
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName
-    deployDiagnostics: ws.value.deployDiagnostics
-    applicationGroupIds: (ws.value.name == 'ws-placeholder') ? ws.value.existingApplicationGroupIds : feedWsApplicationGroupIds
+    deployDiagnostics: deployFeedWorkspaceDiagnostics
+    applicationGroupIds: unionFeedWorkspaceApplicationGroupIds
   }
-}]
+}
 
-output avdresourcegroup string = resourceGroup().name
-output avdnetworkresourcegroup string = networkAvdResourceGroupName
 
-/*
-module workspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = [for ws in items(avdWorkspaces): if (ws.value.deployWorkspace) {
-  name: '${i}WorkspacePrivateEndpointResources_Deploy'
+module placeholderWorkspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = if (deployPlaceholderWorkspacePrivateLink) {
+  name: 'placeholderWorkspacePrivateEndpointResources_Deploy'
+  scope: resourceGroup(networkAvdResourceGroupName)
   dependsOn: [
-    workspaceResources
+    placeholderWorkspaceResources
   ]
   params: {
     location: location
     tags: tags
-    name: blobStorageAccountPrivateEndpointName
-    vnetName: vnetName
-    snetName: snetName
-    workspaceName: storageAccountName
-    privateDnsZoneName: blobPrivateDnsZoneName
-    groupIds: i
-    sharedResourceGroupName: sharedResourceGroupName
+    name: placeholderWorkspacePrivateEndpointName
+    vnetName: placeholderWorkspaceVnetName
+    snetName: placeholderWorkspaceSubnetName
+    workspaceName: placeholderWorkspaceName
+    privateDnsZoneName: placeholderWorkspacePrivateDnsZoneName
+    groupIds: placeholderWorkspaceGroupId
+    centralDnsResourceGroupName: sharedResourceGroupName
+    vnetResourceGroupName: networkAvdResourceGroupName
   }
-}]
+}
 
-*/
+module feedWorkspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = if (deployFeedWorkspacePrivateLink) {
+  name: 'feedWorkspacePrivateEndpointResources_Deploy'
+  dependsOn: [
+    feedWorkspaceResources
+  ]
+  params: {
+    location: location
+    tags: tags
+    name: feedWorkspacePrivateEndpointName
+    vnetName: feedWorkspaceVnetName
+    snetName: feedWorkspaceSubnetName
+    workspaceName: feedWorkspaceName
+    privateDnsZoneName: feedWorkspacePrivateDnsZoneName
+    groupIds: feedWorkspaceGroupId
+    centralDnsResourceGroupName: sharedResourceGroupName
+    vnetResourceGroupName: networkAvdResourceGroupName
+  }
+}
+
+module hostPoolPrivateEndpointResources '../../modules/Microsoft.Network/hostPoolPrivateEndpoint.bicep' = if (deployHostPoolPrivateLink) {
+  name: 'hostPoolPrivateEndpointResources_Deploy'
+  dependsOn: [
+    hostPoolResources
+  ]
+  params: {
+    location: location
+    tags: tags
+    name: hostPoolPrivateEndpointName
+    vnetName: hostPoolVnetName
+    snetName: hostPoolSubnetName
+    hostPoolName: hostPoolName
+    privateDnsZoneName: hostPoolPrivateDnsZoneName
+    groupIds: hostPoolGroupId
+    centralDnsResourceGroupName: sharedResourceGroupName
+    vnetResourceGroupName: networkAvdResourceGroupName
+  }
+}
