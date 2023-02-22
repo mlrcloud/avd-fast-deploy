@@ -64,23 +64,11 @@ var existingSubnetName = vmConfiguration.networkConfiguration.subnetName
 @description('Azure Virtual Desktop Configuration')
 param avdConfiguration object
 
-// Azure Virtual Desktop Workspace Configuration
+// Azure Virtual Desktop Workspaces Configuration
 
 param deploymentFromScratch bool
 var newScenario = deploymentFromScratch
-
-var newOrExistingWorkspaceName = avdConfiguration.workspaces.feedWorkSpace.name
-var workspacePrivateEndpointName = avdConfiguration.workSpace.privateEndpointName
-var groupIdWorkspace = avdConfiguration.workSpace.groupId
-
-
-// Azure Virtual Desktop Private Link Configuration
-
-var avdPrivateLinkEnabled = avdConfiguration.avdPrivateLink.deployPrivateLink
-var placeholderWorkspaceName = avdConfiguration.avdPrivateLink.placeholderWorkspace.name
-var placeholderWorkspacePrivateEndpointName = avdConfiguration.avdPrivateLink.placeholderWorkspace.privateEndpointName
-var groupIdPlaceholderWorkspace = avdConfiguration.avdPrivateLink.placeholderWorkspace.groupId
-var deployPlaceholderWorkspaceDiagnostic = avdConfiguration.avdPrivateLink.placeholderWorkspace.deployDiagnostics
+var avdWorkspaces = avdConfiguration.workspaces
 
 // Azure Virtual Desktop Pool Configuration
 
@@ -111,14 +99,16 @@ var timeZone = avdConfiguration.hostPool.scalePlan.timeZone
 var schedules = avdConfiguration.hostPool.scalePlan.schedules
 var scalingPlanEnabled = avdConfiguration.hostPool.scalePlan.enabled
 var exclusionTag = avdConfiguration.hostPool.scalePlan.exclusionTag
-var existingApplicationGroupIds = avdConfiguration.workSpace.existingApplicationGroupIds
+
+// Azure Virtual Desktop Application Groups Configuration for Feed Workspace
+
+var existingFeedWsApplicationGroupIds = avdConfiguration.workspaces.feedWorkspace.existingApplicationGroupIds
 
 // Azure Virtual Desktop Monitoring Configuration
 
-var deployWorkspaceDiagnostic = avdConfiguration.workSpace.deployDiagnostics
-var deployHostPoolDiagnostic = avdConfiguration.monitoring.deployHostPoolDiagnostics
-var deployDesktopApplicationGroupDiagnostic = avdConfiguration.monitoring.deployDesktopDiagnostics
-var deployRemoteAppApplicationGroupDiagnostic = avdConfiguration.monitoring.deployRemoteAppDiagnostics
+var deployHostPoolDiagnostics = avdConfiguration.monitoring.deployHostPoolDiagnostics
+var deployDesktopApplicationGroupDiagnostics = avdConfiguration.monitoring.deployDesktopDiagnostics
+var deployRemoteAppApplicationGroupDiagnostics = avdConfiguration.monitoring.deployRemoteAppDiagnostics
 
 /* 
   AVD Resource Group deployment 
@@ -148,21 +138,14 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
   params: {
     location: location
     tags: tags
-    avdPrivateLinkEnabled: avdPrivateLinkEnabled
-    placeholderWorkspaceName: placeholderWorkspaceName
-    placeholderWorkspacePrivateEndpointName: placeholderWorkspacePrivateEndpointName
-    groupIdPlaceholderWorkspace: groupIdPlaceholderWorkspace
-    deployPlaceholderWorkspaceDiagnostic: deployPlaceholderWorkspaceDiagnostic
-    newOrExistingWorkspaceName: newOrExistingWorkspaceName
-    workspacePrivateEndpointName: workspacePrivateEndpointName
-    groupIdWorkspace: groupIdWorkspace
-    deployWorkspaceDiagnostic: deployWorkspaceDiagnostic
+    networkAvdResourceGroupName: networkAvdResourceGroupName
+    avdWorkspaces: avdWorkspaces
     hostPoolName: hostPoolName
     hostPoolFriendlyName: hostPoolFriendlyName
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName
     hostPoolType: hostPoolType
-    deployHostPoolDiagnostic: deployHostPoolDiagnostic
+    deployHostPoolDiagnostics: deployHostPoolDiagnostics
     maxSessionLimit: maxSessionLimit
     tokenExpirationTime: tokenExpirationTime
     scalingPlanName: scalingPlanName
@@ -170,13 +153,13 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     schedules: schedules
     scalingPlanEnabled: scalingPlanEnabled
     exclusionTag: exclusionTag
-    existingApplicationGroupIds: existingApplicationGroupIds
+    existingFeedWsApplicationGroupIds: existingFeedWsApplicationGroupIds
     personalDesktopAssignmentType: personalDesktopAssignmentType
     customRdpProperty: customRdpProperty
     desktopApplicationGroupName: desktopApplicationGroupName
-    deployDesktopApplicationGroupDiagnostic: deployDesktopApplicationGroupDiagnostic
+    deployDesktopApplicationGroupDiagnostics: deployDesktopApplicationGroupDiagnostics
     remoteAppApplicationGroupName: remoteAppApplicationGroupName
-    deployRemoteAppApplicationGroupDiagnostic: deployRemoteAppApplicationGroupDiagnostic
+    deployRemoteAppApplicationGroupDiagnostics: deployRemoteAppApplicationGroupDiagnostics
     appsListInfo: appsListInfo
   }
 }

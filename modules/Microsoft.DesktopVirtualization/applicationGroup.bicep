@@ -5,7 +5,7 @@ param tags object
 param logWorkspaceName string 
 param monitoringResourceGroupName string
 param name string
-param deployDiagnostic bool 
+param deployDiagnostics bool 
 param hostPoolName string
 param applicationGroupFriendlyName string
 param description string
@@ -35,7 +35,7 @@ resource applicationGroups 'Microsoft.DesktopVirtualization/applicationgroups@20
 }
 
 
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostic) {
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostics) {
   name: '${name}-diagsetting'
   scope: applicationGroups
   properties: {

@@ -5,7 +5,7 @@ param monitoringResourceGroupName string
 param name string
 param friendlyName string
 param hostPoolType string
-param deployDiagnostic bool 
+param deployDiagnostics bool 
 param maxSessionLimit int
 param validationEnvironment bool = true
 param personalDesktopAssignmentType string
@@ -48,7 +48,7 @@ resource hostPools 'Microsoft.DesktopVirtualization/hostPools@2021-07-12' = {
 }
 
 
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostic) {
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostics) {
   name: '${name}-diagsetting'
   scope: hostPools
   properties: {

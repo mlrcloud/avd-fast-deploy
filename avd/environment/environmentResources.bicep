@@ -9,17 +9,15 @@ param tags object
 
 // resourceGroupNames
 param monitoringResourceGroupName string
+param networkAvdResourceGroupName string
 
 // avdResources Parameters
-param newOrExistingWorkspaceName string
-param workspacePrivateEndpointName string
-param groupIdWorkspace string
-param deployWorkspaceDiagnostic bool = true
+param avdWorkspaces object
 param tokenExpirationTime string
 param hostPoolType string 
 param hostPoolName string 
 param hostPoolFriendlyName string
-param deployHostPoolDiagnostic bool = true
+param deployHostPoolDiagnostics bool = true
 param personalDesktopAssignmentType string 
 param maxSessionLimit int = 12
 
@@ -35,19 +33,13 @@ param scalingPlanEnabled bool
 param exclusionTag string
 
 
-param existingApplicationGroupIds array = []
-param deployDesktopApplicationGroupDiagnostic bool = true
-param deployRemoteAppApplicationGroupDiagnostic bool = true
+param existingFeedWsApplicationGroupIds array = []
+param deployDesktopApplicationGroupDiagnostics bool = true
+param deployRemoteAppApplicationGroupDiagnostics bool = true
 param desktopApplicationGroupName string
 param remoteAppApplicationGroupName string
 param appsListInfo array
 
-// privatelinkResources
-param avdPrivateLinkEnabled bool
-param placeholderWorkspaceName string
-param placeholderWorkspacePrivateEndpointName string
-param deployPlaceholderWorkspaceDiagnostic bool
-param groupIdPlaceholderWorkspace string
 
 // monitoringResources
 param logWorkspaceName string
@@ -58,7 +50,7 @@ var desktopApplicationGroupFriendlyName = '${hostPoolName}-dag'
 var remoteAppApplicationGroupFriendlyName = '${hostPoolName}-rag'
 var desktopApplicationGroupId = array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', desktopApplicationGroupName))
 var remoteAppApplicationGroupId = hostPoolType != 'Pooled' ? [] : array(resourceId('Microsoft.DesktopVirtualization/applicationgroups/', remoteAppApplicationGroupName))
-var applicationGroupIds = union(existingApplicationGroupIds,desktopApplicationGroupId,remoteAppApplicationGroupId)
+var feedWsApplicationGroupIds = union(existingFeedWsApplicationGroupIds,desktopApplicationGroupId,remoteAppApplicationGroupId)
 var descriptionPersonalAppGroup = 'Desktop Application Group created through the Hostpool Wizard'
 var descriptionPooledAppGroup = 'Remote App Application Group created through the Hostpool Wizard'
 
@@ -74,7 +66,7 @@ module hostPoolResources '../../modules/Microsoft.DesktopVirtualization/hostPool
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName
     hostPoolType: hostPoolType
-    deployDiagnostic: deployHostPoolDiagnostic
+    deployDiagnostics: deployHostPoolDiagnostics
     maxSessionLimit: maxSessionLimit
     validationEnvironment: true
     personalDesktopAssignmentType: personalDesktopAssignmentType
@@ -111,7 +103,7 @@ module desktopApplicationGroupResources '../../modules/Microsoft.DesktopVirtuali
     name: desktopApplicationGroupName
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName    
-    deployDiagnostic: deployDesktopApplicationGroupDiagnostic
+    deployDiagnostics: deployDesktopApplicationGroupDiagnostics
     hostPoolName: hostPoolName
     applicationGroupFriendlyName: desktopApplicationGroupFriendlyName
     description: descriptionPersonalAppGroup
@@ -131,7 +123,7 @@ module remoteAppApplicationGroupResources '../../modules/Microsoft.DesktopVirtua
     name: remoteAppApplicationGroupName
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName    
-    deployDiagnostic: deployRemoteAppApplicationGroupDiagnostic
+    deployDiagnostics: deployRemoteAppApplicationGroupDiagnostics
     hostPoolName: hostPoolName
     applicationGroupFriendlyName: remoteAppApplicationGroupFriendlyName
     description: descriptionPooledAppGroup
@@ -159,8 +151,10 @@ module remoteAppApplicationsResources '../../modules/Microsoft.DesktopVirtualiza
   }
 }]
 
-module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = {
-  name: 'workspaceRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
+
+module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = [for ws in items(avdWorkspaces): if (ws.value.deployWorkspace) {
+  scope: (ws.value.name == 'ws-placeholder') ? resourceGroup(networkAvdResourceGroupName) : resourceGroup()
+  name: (ws.value.name == 'ws-placeholder') ? 'placeholderWorkspaceRss_Deploy' : 'workspaceRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
   dependsOn: [
     hostPoolResources
     desktopApplicationGroupResources
@@ -169,32 +163,21 @@ module workspaceResources '../../modules/Microsoft.DesktopVirtualization/workspa
   params: {
     location: location
     tags: tags
-    name: newOrExistingWorkspaceName
+    name: ws.value.name
     logWorkspaceName: logWorkspaceName
     monitoringResourceGroupName: monitoringResourceGroupName
-    deployDiagnostic: deployWorkspaceDiagnostic
-    applicationGroupIds: applicationGroupIds
+    deployDiagnostics: ws.value.deployDiagnostics
+    applicationGroupIds: (ws.value.name == 'ws-placeholder') ? ws.value.existingApplicationGroupIds : feedWsApplicationGroupIds
   }
-}
+}]
 
-module placeholderWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/workspace.bicep' = if (avdPrivateLinkEnabled) {
-  name: 'placeholderWorkspaceRss_Deploy'
-  params: {
-    location: location
-    tags: tags
-    name: placeholderWorkspaceName
-    logWorkspaceName: logWorkspaceName
-    monitoringResourceGroupName: monitoringResourceGroupName
-    deployDiagnostic: deployPlaceholderWorkspaceDiagnostic
-    applicationGroupIds: [] //placeholder workspace does not required application groups. It must be an unused placeholder workspace to terminate the global endpoint.
-  }
-}
+output avdresourcegroup string = resourceGroup().name
+output avdnetworkresourcegroup string = networkAvdResourceGroupName
 
-
-module workspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = [for i in range(0, length(snetsInfo)): if (snetsInfo[i].name == 'snet-plinks') {
+/*
+module workspacePrivateEndpointResources '../../modules/Microsoft.Network/workspacePrivateEndpoint.bicep' = [for ws in items(avdWorkspaces): if (ws.value.deployWorkspace) {
   name: '${i}WorkspacePrivateEndpointResources_Deploy'
   dependsOn: [
-    placeholderWorkspaceResources
     workspaceResources
   ]
   params: {
@@ -210,3 +193,4 @@ module workspacePrivateEndpointResources '../../modules/Microsoft.Network/worksp
   }
 }]
 
+*/

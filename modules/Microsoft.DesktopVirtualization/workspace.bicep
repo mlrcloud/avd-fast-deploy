@@ -3,7 +3,7 @@ param tags object
 param logWorkspaceName string 
 param monitoringResourceGroupName string
 param name string
-param deployDiagnostic bool 
+param deployDiagnostics bool 
 param applicationGroupIds array
 
 
@@ -23,7 +23,7 @@ resource workspace 'Microsoft.DesktopVirtualization/workspaces@2019-12-10-previe
 }
 
 
-resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostic) {
+resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = if (deployDiagnostics) {
   name: '${name}-diagsetting'
   scope: workspace
   properties: {

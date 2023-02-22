@@ -93,7 +93,8 @@
     "avdConfiguration": {
       "value": {
         "workspaces": {
-          "placeholderWorkSpace": {
+          "placeholderWorkspace": {
+            "deployWorkspace": true,
             "name": "ws-placeholder",
             "deployPrivateLink": true,
             "privateEndpointName": "plink-global-ws",
@@ -102,8 +103,10 @@
             "deployDiagnostics": true,
             "existingApplicationGroupIds": []
           },
-          "feedWorkSpace": {
+          "feedWorkspace": {
+            "deployWorkspace": true,
             "name": "ws-avd-datapers",
+            "deployPrivateLink": true,
             "privateEndpointName": "plink-ws-avd-datapers",
             "groupId": "feed",
             "subnetName": "snet-avd-pl",
@@ -120,7 +123,7 @@
           "assignmentType": "Automatic",
           "maxSessions": 10,
           "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
-          "tokenExpirationTime": "02/22/2023 8:55:50 AM",
+          "tokenExpirationTime": "02/26/2023 8:55:50 AM",
           "scalePlan": {
             "enabled": false,
             "name": "NA",

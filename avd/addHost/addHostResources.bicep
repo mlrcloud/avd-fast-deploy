@@ -26,6 +26,7 @@ param vmSize string
 param vmRedundancy string
 param availabilityZones array
 param existingDomainAdminName string
+@secure()
 param existingDomainAdminPassword string
 param networkAvdResourceGroupName string
 param existingVnetName string
