@@ -71,7 +71,7 @@
         "availabilityZones": [1,2,3],
         "adminUsername": "azureAdmin",
         "image": {
-          "imageId": "/subscriptions/6ec2c6df-fdd8-4d3e-99b7-ad64629a7bae/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/gallery/images/WVD10_Pers_Definition/versions/1.0.0",
+          "imageId": "/subscriptions/76b61f34-c67e-4742-9ad7-02492ceef8a4/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/gallery/images/WVD10_Pers_Definition/versions/1.0.0",
           "imageOffer": "Windows-10",
           "imageSKU": "20h2-ent",
           "imagePublisher": "MicrosoftWindowsDesktop",
@@ -104,7 +104,8 @@
               "privateEndpointName": "plink-global-ws",
               "privateDnsZone": "privatelink.wvd.microsoft.com",
               "groupId": "global",
-              "subnetName": "snet-avd-pl"
+              "subnetName": "snet-avd-pl",
+              "publicNetworkAccess": "Disabled"
             }
           },
           "feedWorkspace": {
@@ -117,15 +118,16 @@
               "privateEndpointName": "plink-ws-avd-datapers",
               "privateDnsZone": "privatelink.wvd.microsoft.com",
               "groupId": "feed",
-              "subnetName": "snet-avd-pl"
+              "subnetName": "snet-avd-pl",
+              "publicNetworkAccess": "Disabled"
             }
           }
         },
         "hostpool": {
-          "addHosts": false,
+          "addHosts": true,
           "name": "hp-data-pers",
           "instances": 1,
-          "currentInstances": 0,
+          "currentInstances": 1,
           "type": "Personal",
           "assignmentType": "Automatic",
           "maxSessions": 10,
@@ -145,7 +147,8 @@
             "privateEndpointName": "plink-hp-avd-datapers",
             "privateDnsZone": "privatelink.wvd.microsoft.com",
             "groupId": "connection",
-            "subnetName": "snet-avd-pl"
+            "subnetName": "snet-avd-pl",
+            "publicNetworkAccess": "Disabled"
           }
         },
         "monitoring": {

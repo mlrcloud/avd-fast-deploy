@@ -39,6 +39,7 @@ param hostPoolPrivateDnsZoneName string
 param hostPoolGroupId string
 param hostPoolVnetName string
 param hostPoolSubnetName string
+param publicNetworkAccessHostPool string
 
 // workspaceResources
 
@@ -52,6 +53,7 @@ param placeholderWorkspaceVnetName string
 param placeholderWorkspaceSubnetName string 
 param deployPlaceholderWorkspaceDiagnostics bool 
 param existingPlaceholderWorkspaceApplicationGroupIds array
+param publicNetworkAccessPlaceholderWorkspace string 
 param feedWorkspaceName string 
 param deployFeedWorkspace bool 
 param deployFeedWorkspacePrivateLink bool 
@@ -62,6 +64,7 @@ param feedWorkspaceVnetName string
 param feedWorkspaceSubnetName string 
 param deployFeedWorkspaceDiagnostics bool 
 param existingFeedWorkspaceApplicationGroupIds array 
+param publicNetworkAccessFeedWorkspace string
 
 param deployDesktopApplicationGroupDiagnostics bool
 param deployRemoteAppApplicationGroupDiagnostics bool
@@ -101,6 +104,7 @@ module hostPoolResources '../../modules/Microsoft.DesktopVirtualization/hostPool
     personalDesktopAssignmentType: personalDesktopAssignmentType
     customRdpProperty: customRdpProperty
     tokenExpirationTime: tokenExpirationTime
+    publicNetworkAccess: publicNetworkAccessHostPool
   }
 }
 
@@ -191,6 +195,7 @@ module placeholderWorkspaceResources '../../modules/Microsoft.DesktopVirtualizat
     monitoringResourceGroupName: monitoringResourceGroupName
     deployDiagnostics: deployPlaceholderWorkspaceDiagnostics
     applicationGroupIds: existingPlaceholderWorkspaceApplicationGroupIds
+    publicNetworkAccess: publicNetworkAccessPlaceholderWorkspace
   }
 }
 
@@ -209,6 +214,7 @@ module feedWorkspaceResources '../../modules/Microsoft.DesktopVirtualization/wor
     monitoringResourceGroupName: monitoringResourceGroupName
     deployDiagnostics: deployFeedWorkspaceDiagnostics
     applicationGroupIds: unionFeedWorkspaceApplicationGroupIds
+    publicNetworkAccess: publicNetworkAccessFeedWorkspace
   }
 }
 

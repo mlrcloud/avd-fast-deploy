@@ -76,8 +76,10 @@ var placeholderWorkspacePrivateEndpointName = avdConfiguration.workspaces.placeh
 var placeholderWorkspacePrivateDnsZoneName = avdConfiguration.workspaces.placeholderWorkspace.privateLink.privateDNSZone
 var placeholderWorkspaceGroupId = avdConfiguration.workspaces.placeholderWorkspace.privateLink.groupId
 var placeholderWorkspaceSubnetName = avdConfiguration.workspaces.placeholderWorkspace.privateLink.subnetName
+var publicNetworkAccessPlaceholderWorkspace = avdConfiguration.workspaces.placeholderWorkspace.privateLink.publicNetworkAccess
 var deployPlaceholderWorkspaceDiagnostics = avdConfiguration.workspaces.placeholderWorkspace.deployDiagnostics
 var existingPlaceholderWorkspaceApplicationGroupIds = avdConfiguration.workspaces.placeholderWorkspace.existingApplicationGroupIds
+
 
 var feedWorkspaceName = avdConfiguration.workspaces.feedWorkspace.Name
 var deployFeedWorkspace = avdConfiguration.workspaces.feedWorkspace.deployWorkspace
@@ -86,6 +88,7 @@ var feedWorkspacePrivateEndpointName = avdConfiguration.workspaces.feedWorkspace
 var feedWorkspacePrivateDnsZoneName = avdConfiguration.workspaces.feedWorkspace.privateLink.privateDNSZone
 var feedWorkspaceGroupId = avdConfiguration.workspaces.feedWorkspace.privateLink.groupId
 var feedWorkspaceSubnetName = avdConfiguration.workspaces.feedWorkspace.privateLink.subnetName
+var publicNetworkAccessFeedWorkspace = avdConfiguration.workspaces.feedWorkspace.privateLink.publicNetworkAccess
 var deployFeedWorkspaceDiagnostics = avdConfiguration.workspaces.feedWorkspace.deployDiagnostics
 var existingFeedWorkspaceApplicationGroupIds = avdConfiguration.workspaces.feedWorkspace.existingApplicationGroupIds
 
@@ -119,6 +122,7 @@ var hostPoolPrivateEndpointName = avdConfiguration.hostPool.privateLink.privateE
 var hostPoolPrivateDnsZoneName = avdConfiguration.hostPool.privateLink.privateDNSZone
 var hostPoolGroupId = avdConfiguration.hostPool.privateLink.groupId
 var hostPoolSubnetName = avdConfiguration.hostPool.privateLink.subnetName
+var publicNetworkAccessHostPool = avdConfiguration.hostPool.privateLink.publicNetworkAccess
 
 
 // Azure Virtual Desktop Scale Plan
@@ -176,6 +180,7 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     placeholderWorkspaceSubnetName: placeholderWorkspaceSubnetName
     deployPlaceholderWorkspaceDiagnostics: deployPlaceholderWorkspaceDiagnostics
     existingPlaceholderWorkspaceApplicationGroupIds: existingPlaceholderWorkspaceApplicationGroupIds
+    publicNetworkAccessPlaceholderWorkspace: publicNetworkAccessPlaceholderWorkspace
     feedWorkspaceName: feedWorkspaceName
     deployFeedWorkspace: deployFeedWorkspace
     deployFeedWorkspacePrivateLink: deployFeedWorkspacePrivateLink
@@ -186,6 +191,7 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     feedWorkspaceSubnetName: feedWorkspaceSubnetName
     deployFeedWorkspaceDiagnostics: deployFeedWorkspaceDiagnostics
     existingFeedWorkspaceApplicationGroupIds: existingFeedWorkspaceApplicationGroupIds
+    publicNetworkAccessFeedWorkspace: publicNetworkAccessFeedWorkspace
     hostPoolName: hostPoolName
     hostPoolFriendlyName: hostPoolFriendlyName
     logWorkspaceName: logWorkspaceName
@@ -212,6 +218,7 @@ module environmentResources 'environment/environmentResources.bicep' = if (newSc
     hostPoolGroupId: hostPoolGroupId
     hostPoolVnetName: existingAvdVnetName
     hostPoolSubnetName: hostPoolSubnetName
+    publicNetworkAccessHostPool: publicNetworkAccessHostPool
   }
 }
 
