@@ -127,7 +127,7 @@
           "addHosts": true,
           "name": "hp-data-pers",
           "instances": 1,
-          "currentInstances": 1,
+          "currentInstances": 0,
           "type": "Personal",
           "assignmentType": "Automatic",
           "maxSessions": 10,
