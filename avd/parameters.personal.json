@@ -100,12 +100,12 @@
             "deployDiagnostics": true,
             "existingApplicationGroupIds": [],
             "privateLink": {
-              "deployPrivateLink": true,
+              "deployPrivateLink": false,
               "privateEndpointName": "plink-global-ws",
               "privateDnsZone": "privatelink.wvd.microsoft.com",
               "groupId": "global",
               "subnetName": "snet-avd-pl",
-              "publicNetworkAccess": "Disabled"
+              "publicNetworkAccess": "Enabled"
             }
           },
           "feedWorkspace": {
@@ -114,12 +114,12 @@
             "deployDiagnostics": true,
             "existingApplicationGroupIds": [],
             "privateLink": {
-              "deployPrivateLink": true,
+              "deployPrivateLink": false,
               "privateEndpointName": "plink-ws-avd-datapers",
               "privateDnsZone": "privatelink.wvd.microsoft.com",
               "groupId": "feed",
               "subnetName": "snet-avd-pl",
-              "publicNetworkAccess": "Disabled"
+              "publicNetworkAccess": "Enabled"
             }
           }
         },
@@ -131,8 +131,8 @@
           "type": "Personal",
           "assignmentType": "Automatic",
           "maxSessions": 10,
-          "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
-          "tokenExpirationTime": "02/26/2023 8:55:50 AM",
+          "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;targetisaadjoined:i:1",
+          "tokenExpirationTime": "03/01/2023 8:55:50 AM",
           "scalePlan": {
             "enabled": false,
             "name": "NA",
@@ -143,12 +143,12 @@
           "existingApplicationGroupIds": [],
           "apps": [],
           "privateLink": {
-            "deployPrivateLink": true,
+            "deployPrivateLink": false,
             "privateEndpointName": "plink-hp-avd-datapers",
             "privateDnsZone": "privatelink.wvd.microsoft.com",
             "groupId": "connection",
             "subnetName": "snet-avd-pl",
-            "publicNetworkAccess": "Disabled"
+            "publicNetworkAccess": "Enabled"
           }
         },
         "monitoring": {

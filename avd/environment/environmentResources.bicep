@@ -145,7 +145,7 @@ module desktopApplicationGroupResources '../../modules/Microsoft.DesktopVirtuali
 }
 
 module remoteAppApplicationGroupResources '../../modules/Microsoft.DesktopVirtualization/applicationGroup.bicep' = if (hostPoolType == 'Pooled') {
-  name: 'pooledAppGroupRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy'
+  name: 'pooledAppGroupRssFor${hostPoolType}_${uniqueString(hostPoolName, remoteAppApplicationGroupName)}_Deploy'
   dependsOn: [
     hostPoolResources
     desktopApplicationGroupResources
@@ -165,7 +165,7 @@ module remoteAppApplicationGroupResources '../../modules/Microsoft.DesktopVirtua
 }
 
 module remoteAppApplicationsResources '../../modules/Microsoft.DesktopVirtualization/application.bicep' = [ for (app, i) in appsListInfo : if (hostPoolType == 'Pooled') {
-  name: 'applicationsRssFor${hostPoolType}_${uniqueString(hostPoolName)}_Deploy${i}'
+  name: 'appsRssFor${hostPoolType}_${uniqueString(hostPoolName, remoteAppApplicationGroupName)}_Deploy${i}'
   dependsOn: [
     hostPoolResources
     desktopApplicationGroupResources
