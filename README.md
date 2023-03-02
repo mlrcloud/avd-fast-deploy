@@ -10,23 +10,25 @@ The following table summarizes identity scenarios that this template supports:
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Azure AD + AD DS  | Joined to AD DS  | In Azure AD and AD DS, synchronized | Supported | 
 The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
-- **Using AD DS VMs in shared vnet**: 
+\- **Using AD DS VMs in shared vnet**: 
   - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/mlrcloud/vwan-azfw-fast-deploy).
-- **Using on-premise AD DS**: [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+- **Using on-premise AD DS**: 
+  - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).|
 | Azure AD + AD DS  | Joined to Azure AD  | In Azure AD and AD DS, synchronized | Supported |
 The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
-- **Using AD DS VMs in shared vnet**: 
+\- **Using AD DS VMs in shared vnet**: 
   - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/mlrcloud/vwan-azfw-fast-deploy).
-- **Using on-premise AD DS**: [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+- **Using on-premise AD DS**: 
+  - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).|
 | Azure AD only  | Joined to Azure AD  | In Azure AD | Not supported. User accounts must be hybrid identities, which means you'll also need AD DS and Azure AD Connect. You must create these accounts in AD DS and synchronize them to Azure AD. | 
-- [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+\- [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).|
 
 
 All network elements are provided by the mentioned repositories, but if you want to use your custom environment, please refer to the specific question in this file.
 
 The following diagram shows a detailed global architecture of the logical of the resources created by this template. Relevant resources for the specific scenario covered in this repository are deployed into the following resource groups:
 
-![Global architecture](/doc/networking/general-deployment.png)
+![Global architecture](/doc/images/networking/general-deployment.png)
 
 - **rg-avd**: network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
 - **rg-asr**: Disaster recovery resources for personal desktop scenario.
