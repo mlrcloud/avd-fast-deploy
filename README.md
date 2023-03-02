@@ -8,8 +8,7 @@ The following table summarizes identity scenarios that this template supports:
 
 | Identity scenario  | Session hosts | User accounts | FSLogix Profile Container (pooled) | Bicep templates required |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| Azure AD + AD DS  | Joined to AD DS  | In Azure AD and AD DS, synchronized | Supported | 
-The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
+| Azure AD + AD DS  | Joined to AD DS  | In Azure AD and AD DS, synchronized | Supported | The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
 \- **Using AD DS VMs in shared vnet**: 
   - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/mlrcloud/vwan-azfw-fast-deploy).
 - **Using on-premise AD DS**: 
