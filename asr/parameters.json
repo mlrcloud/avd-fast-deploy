@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "northeurope"
+    },
+    "tags": {
+      "value": {
+        "project": "dr-avd"
+      }
+    },
+    "resourceGroupNames": {
+      "value": {
+        "asr": "rg-asr"
+      }
+    },
+    "asrConfig": {
+      "value": {
+        "vaultName": "avd-vault",
+        "publicNetworkAccess": "Enabled"
+      }
+    }
+  }    
+}
