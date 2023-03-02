@@ -1,19 +1,42 @@
 # Fast Deploy - Azure Virtual Desktop
 
-This repository contains an Azure Bicep template to simplify the deployment of an Azure Virtual Desktop in a test or demo environment. All network elements are provided by the repository [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/MS-ES-DEMO/vwan-azfw-consumption-play). If you want to use your custom environment, please refer to the specific question in this file.
+This repository contains an Azure Bicep template to simplify the deployment of an Azure Virtual Desktop in a test or demo environment. 
+
+## Identity scenarios
+
+The following table summarizes identity scenarios that this template supports:
+
+| Identity scenario  | Session hosts | User accounts | FSLogix Profile Container (pooled) | Bicep templates required |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Azure AD + AD DS  | Joined to AD DS  | In Azure AD and AD DS, synchronized | Supported | 
+The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
+- **Using AD DS VMs in shared vnet**: 
+  - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/mlrcloud/vwan-azfw-fast-deploy).
+- **Using on-premise AD DS**: [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+| Azure AD + AD DS  | Joined to Azure AD  | In Azure AD and AD DS, synchronized | Supported |
+The network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
+- **Using AD DS VMs in shared vnet**: 
+  - [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN and Azure Firewall](https://github.com/mlrcloud/vwan-azfw-fast-deploy).
+- **Using on-premise AD DS**: [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+| Azure AD only  | Joined to Azure AD  | In Azure AD | Not supported. User accounts must be hybrid identities, which means you'll also need AD DS and Azure AD Connect. You must create these accounts in AD DS and synchronize them to Azure AD. | 
+- [Fast Deploy: Hub-spoke network topology with Azure Virtual WAN, Azure Firewall and DNS Private Resolver](https://github.com/mlrcloud/vwan-azfw-dnsresolver).
+
+
+All network elements are provided by the mentioned repositories, but if you want to use your custom environment, please refer to the specific question in this file.
 
 The following diagram shows a detailed global architecture of the logical of the resources created by this template. Relevant resources for the specific scenario covered in this repository are deployed into the following resource groups:
 
-![Global architecture](/doc/images/general-deployment.png)
+![Global architecture](/doc/networking/general-deployment.png)
 
 - **rg-avd**: network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
+- **rg-asr**: Disaster recovery resources for personal desktop scenario.
 - **rg-monitor**: a storage account and a Log Analytics Workspace to store the diagnostics information.
 - **rg-images**: image Builder resources required for image management.
 - **rg-profiles**: a storage account for roaming profiles.
 
-The following diagram shows a detailed architecture of the logical and network topology of the resources created by this template.
+The following diagram shows a detailed architecture of the network topology of the resources created by this template for a personal desktop scenario. Scenario bellow maps with scenario Azure AD only in **[Identity scenarios](#compatibility)**<br>.
 
-![Logical architecture](/doc/images/logical-network-diagram.png)
+![Logical architecture](/doc/images/networking/networking-dr-pers.png)
 
 ## Repository structure
 
