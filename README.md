@@ -20,7 +20,7 @@ The following diagram shows a detailed global architecture of the logical of the
 ![Global architecture](/doc/images/networking/general-deployment.png)
 
 - **rg-avd**: network configuration for provisioning Azure Virtual Desktop with different usage scenarios.
-- **rg-asr**: Disaster recovery resources for personal desktop scenario.
+- **rg-asr**: disaster recovery resources for personal desktop scenario.
 - **rg-monitor**: a storage account and a Log Analytics Workspace to store the diagnostics information.
 - **rg-images**: image Builder resources required for image management.
 - **rg-profiles**: a storage account for roaming profiles.
@@ -33,10 +33,11 @@ The following diagram shows a detailed architecture of the network topology of t
 
 This repository is organized in the following folders:
 
-- **avd**: folder containing Bicep file that deploy the environment. Insid this folder the following files are available:
-  - `environment`: templates to deploy a hostpool (pooled or personal) resources, scaling plan, desktop application group, remoteapp application group (only for pooled hostpool) and a workspace.
+- **avd**: folder containing Bicep file that deploy the environment. Inside this folder the following files are available:
+  - `environment`: templates to deploy a hostpool (pooled or personal) resources, scaling plan (only for pooled hostpool), desktop application group, remoteapp application group (only for pooled hostpool) and a workspace.
   - `addHost`: templates to deploy the required modules to add new session hosts to an existing pool previously created with the environment templates.
   - `iam`: deploys virtual desktop autoscale role resources.
+- **asr**: templates to deploy disaster recovery resources for personal pool scenario.
 - **doc**: contains documents and images related to this scenario.
 - **modules**: Bicep modules that integrates the different resources used by the base scripts.
 - **utils**: extra files required to deploy this scenario.
@@ -54,8 +55,8 @@ After validating Bicep installation, you would need to configure the Azure subsc
 
 ## How to deploy
 
-1. Deploy <https://github.com/MS-ES-DEMO/vwan-azfw-consumption-play> repository to have available the networking resources used by this template.
-2. Customize the required parameters in parameters.personal.json o parameters.pooled.json files described in the Parameters section .
+1. Deploy the base Bicep template based on your **[Identity scenarios](#Identity-scenarios)** to have available the networking resources used by this template.
+2. Customize the required parameters in parameters.personal.json o parameters.pooled.json files described in the Parameters section.
 3. Add extra customizations if wanted to adapt their values to your specific environment.
 4. Execute `deploy.PowerShell.ps1` or `deploy.CLI.ps1` script based on the current command line Azure tools available in your computer with the correct parameter file.
 5. Wait around 10-15 minutes.
@@ -63,7 +64,7 @@ After validating Bicep installation, you would need to configure the Azure subsc
 
 ### Custom Deployment
 
-If you don't want to use <https://github.com/MS-ES-DEMO/vwan-azfw-consumption-play> repository for networking resources, you would need to have an Azure subscription with the followin resources and pass the right values in the parameters file.
+If you don't want to use any of the base Bicep templates for networking resources, you would need to have an Azure subscription with the following resources and pass the right values in the parameters file.
 
 - A resource group where monitoring resources would be hosted.
 - A Log Analytics workspace already created in the monitoring Resource Group.
@@ -74,6 +75,9 @@ If you don't want to use <https://github.com/MS-ES-DEMO/vwan-azfw-consumption-pl
 - A storage account used by the diagnostics extension.
 
 ## Parameters
+
+### Personal pool scenario
+The following parameters are required to deploy *personal pool* scenario:
 
 - *roleDefinitions.X.principalId*
   - "type": "string",
