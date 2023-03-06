@@ -101,14 +101,46 @@ The following parameters are required to deploy *personal pool* scenario:
   - "type": "bool",
   - "description": "If you are creating a new Azure Virtual Desktop environment you should keep this value as true. It would create all the required resources. If you already has an environment deployed and the only thing you want is to add new pools, change it to false."
 
-- *newOrExistingLogAnalyticsWorkspaceName*
+- *monitoringOptions.newOrExistingLogAnalyticsWorkspaceName*
   - "type": "string",
   - "description": "If you want to use an existing Log Analytics Workspace make sure that the correct name is configured in this parameter."
+
+- *monitoringOptions.diagnosticsStorageAccountName*
+  - "type": "string",
+  - "description": "Storage account name for Diagnostic extension."
   
+- *vmConfiguration.aadLogin*
+  - "type": "bool",
+  - "description": "If you want to join VM to AAD you should keep this value as `true`. In case you keep this value as `false`, you should configure the domainConfiguration parameters."
+
+- *vmConfiguration.prefixName*
+  - "type": "string",
+  - "description": "Provide the prefix name for your session hosts."
+
+- *vmConfiguration.sku*
+  - "type": "string",
+  - "description": "Select the instance type that best meets the performance requirements of your session hosts."
+
+- *vmConfiguration.redundancy*
+  - "type": "string",
+  - "description": "Select either availabilityZone or availabilitySet."
+
+- *vmConfiguration.availabilityZones*
+  - "type": "array",
+  - "description": "Indicate the number of AZs to which you want to spread your session hosts. In case you use availabilitySet, this parameter is ignored."
+
 - *vmConfiguration.adminUsername*
   - "type": "string",
   - "description": "User name of the local admin configured in every virtual machine deployed."
 
-- *domainConfiguration*
+- *vmConfiguration.image.imageId*
+  - "type": "string",
+  - "description": "Indicate a `imageId` of an already deployed image version from an Azure Gallery. In case you want to use a custom image, you should keep this value empty and indicate the `imageOffer`, `imageSKU`, `imagePublisher` and `imageVersion` parameters."
+
+- *vmConfiguration.domainConfiguration*
   - "type": "object",
   - "description": "Modify the properties in this object to adjust it to your current Active Directoy Domain details.
+
+- *vmConfiguration.networkConfiguration*
+  - "type": "object",
+  - "description": "Provide the names of the vnet and subnet where session hosts will be deployed.
