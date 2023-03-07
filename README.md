@@ -80,6 +80,7 @@ If you don't want to use any of the base Bicep templates for networking resource
 The following parameters are required to deploy *personal pool* scenario:
 
 | Parameter | Type | Description | Default value |
+| ------------- | ------------- | ------------- | ------------- |
 | *roleDefinitions.X.principalId* | string | Replace this GUID with the Object ID of the Windows Virtual Desktop application created by default inside your Azure Active Directory. | 26da2792-4d23-4313-b9e7-60bd7c1bf0b1 |
 | *avdConfiguration.workSpace.tokenExpirationTime* | string | Modify the expiration time between one hour ahead or 30 days of the actual time. | 03/05/2023 8:55:50 AM |
 
