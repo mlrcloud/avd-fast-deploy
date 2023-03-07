@@ -118,5 +118,6 @@ The following parameters are required to deploy *personal pool* scenario:
 | *avdConfiguration.hostpool.currentInstances* | string | Provide the current number of session hosts in the hostpool. | 0 |
 | *avdConfiguration.hostpool.type* | string | Select the type of hostpool you want to deploy. | Personal |
 | *avdConfiguration.hostpool.assignmentType* | string | Select the assignment type of the hostpool. | Automatic |
+| *avdConfiguration.hostpool.rdpProperties* | string | Provide RDP properties of the hostpool. To access Azure AD-joined VMs using the web, Android, macOS and iOS clients or from desktop clients running on local PC that doesn't meet one of [these](https://learn.microsoft.com/en-us/azure/virtual-desktop/azure-ad-joined-session-hosts#connect-using-the-windows-desktop-client) conditions, you must add `targetisaadjoined:i:1` as a custom RDP property to the host pool. | audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;targetisaadjoined:i:1 |
 
 

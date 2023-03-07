@@ -86,7 +86,7 @@
           "vnetName": "vnet-avd",
           "subnetName": "snet-hp-data-pool"
         },
-        "hostpoolRegistration": {
+        "hostPoolRegistration": {
           "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
         }
       }
@@ -121,7 +121,7 @@
             }
           }
         },
-        "hostpool": {
+        "hostPool": {
           "addHosts": true,
           "name": "hp-data-pool",
           "instances": 1,
@@ -131,6 +131,7 @@
           "maxSessions": 10,
           "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;",
           "tokenExpirationTime": "03/05/2023 8:55:50 AM",
+          "deployDiagnostics": true,
           "scalePlan": {
             "enabled": false,
             "name": "sp-hp-data-pool",
@@ -165,78 +166,6 @@
               }
             ]
           },
-          "apps": [
-            {
-              "remoteAppApplicationName": "Word",
-              "applicationType": "Inbuilt",
-              "description": "Word",
-              "filePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
-              "friendlyName": "Word",
-              "iconIndex": 0,
-              "iconPath": "C:\\Program Files\\Microsoft Office\\Root\\VFS\\Windows\\Installer\\{90160000-000F-0000-1000-0000000FF1CE}\\wordicon.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "Paint",
-              "applicationType": "InBuilt",
-              "description": "Paint",
-              "filePath": "C:\\Windows\\system32\\mspaint.exe",
-              "friendlyName": "Paint",
-              "iconIndex": 0,
-              "iconPath": "C:\\Windows\\system32\\mspaint.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "Remote Desktop Connection",
-              "applicationType": "InBuilt",
-              "description": "Remote Desktop Connection",
-              "filePath": "C:\\Windows\\system32\\mstsc.exe",
-              "friendlyName": "Remote Desktop Connection",
-              "iconIndex": 0,
-              "iconPath": "C:\\Windows\\system32\\mstsc.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "Microsoft Edge",
-              "applicationType": "InBuilt",
-              "description": "Microsoft Edge",
-              "filePath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-              "friendlyName": "Microsoft Edge",
-              "iconIndex": 0,
-              "iconPath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "Notepad",
-              "applicationType": "InBuilt",
-              "description": "Notepad",
-              "filePath": "C:\\Windows\\system32\\notepad.exe",
-              "friendlyName": "Notepad",
-              "iconIndex": 0,
-              "iconPath": "C:\\Windows\\system32\\notepad.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "WordPad",
-              "applicationType": "InBuilt",
-              "description": "WordPad",
-              "filePath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
-              "friendlyName": "WordPad",
-              "iconIndex": 0,
-              "iconPath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
-              "showInPortal": true
-            },
-            {
-              "remoteAppApplicationName": "Power BI Desktop",
-              "applicationType": "InBuilt",
-              "description": "Power BI Desktop",
-              "filePath": "C:\\Program Files\\Microsoft Power BI Desktop\\bin\\PBIDesktop.exe",
-              "friendlyName": "Power BI Desktop",
-              "iconIndex": 0,
-              "iconPath": "C:\\Windows\\Installer\\{6c273ae4-a5d9-4efb-aa50-c4d3d79d03fb}\\IconPowerBI",
-              "showInPortal": true
-            }
-          ],
           "privateLink": {
             "deployPrivateLink": true,
             "privateEndpointName": "plink-hp-avd-datapool",
@@ -245,12 +174,88 @@
             "subnetName": "snet-avd-pl"
           }
         },
-        "monitoring": {
-          "deployWorkspaceDiagnostics": true,
-          "deployHostPoolDiagnostics": true,
-          "deployDesktopDiagnostics": true,
-          "deployRemoteAppDiagnostics": true
-        }
+        "applicationGroups": {
+          "desktopAppGroup": {
+            "name": "hp-data-pers-dag",
+            "deployDiagnostics": true
+          },
+          "remoteAppGroup": {
+            "name": "NA",
+            "deployDiagnostics": false,
+            "apps": [
+              {
+                "remoteAppApplicationName": "Word",
+                "applicationType": "Inbuilt",
+                "description": "Word",
+                "filePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+                "friendlyName": "Word",
+                "iconIndex": 0,
+                "iconPath": "C:\\Program Files\\Microsoft Office\\Root\\VFS\\Windows\\Installer\\{90160000-000F-0000-1000-0000000FF1CE}\\wordicon.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "Paint",
+                "applicationType": "InBuilt",
+                "description": "Paint",
+                "filePath": "C:\\Windows\\system32\\mspaint.exe",
+                "friendlyName": "Paint",
+                "iconIndex": 0,
+                "iconPath": "C:\\Windows\\system32\\mspaint.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "Remote Desktop Connection",
+                "applicationType": "InBuilt",
+                "description": "Remote Desktop Connection",
+                "filePath": "C:\\Windows\\system32\\mstsc.exe",
+                "friendlyName": "Remote Desktop Connection",
+                "iconIndex": 0,
+                "iconPath": "C:\\Windows\\system32\\mstsc.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "Microsoft Edge",
+                "applicationType": "InBuilt",
+                "description": "Microsoft Edge",
+                "filePath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+                "friendlyName": "Microsoft Edge",
+                "iconIndex": 0,
+                "iconPath": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "Notepad",
+                "applicationType": "InBuilt",
+                "description": "Notepad",
+                "filePath": "C:\\Windows\\system32\\notepad.exe",
+                "friendlyName": "Notepad",
+                "iconIndex": 0,
+                "iconPath": "C:\\Windows\\system32\\notepad.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "WordPad",
+                "applicationType": "InBuilt",
+                "description": "WordPad",
+                "filePath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
+                "friendlyName": "WordPad",
+                "iconIndex": 0,
+                "iconPath": "C:\\Program Files\\Windows NT\\Accessories\\wordpad.exe",
+                "showInPortal": true
+              },
+              {
+                "remoteAppApplicationName": "Power BI Desktop",
+                "applicationType": "InBuilt",
+                "description": "Power BI Desktop",
+                "filePath": "C:\\Program Files\\Microsoft Power BI Desktop\\bin\\PBIDesktop.exe",
+                "friendlyName": "Power BI Desktop",
+                "iconIndex": 0,
+                "iconPath": "C:\\Windows\\Installer\\{6c273ae4-a5d9-4efb-aa50-c4d3d79d03fb}\\IconPowerBI",
+                "showInPortal": true
+              }
+            ]
+          }
+      }
       }
     }
   }

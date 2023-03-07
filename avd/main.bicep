@@ -109,11 +109,7 @@ var maxSessionLimit = avdConfiguration.hostPool.maxSessions
 var customRdpProperty = avdConfiguration.hostPool.rdpProperties
 
 var tokenExpirationTime = avdConfiguration.hostPool.tokenExpirationTime
-
-var desktopApplicationGroupName = '${hostPoolName}-dag'
-var remoteAppApplicationGroupName = '${hostPoolName}-rag'
-
-var appsListInfo = avdConfiguration.hostPool.apps
+var deployHostPoolDiagnostics = avdConfiguration.hostPool.deployDiagnostics
 
 // Azure Virtual Desktop Pool Private Link Configuration
 
@@ -134,11 +130,13 @@ var scalingPlanEnabled = avdConfiguration.hostPool.scalePlan.enabled
 var exclusionTag = avdConfiguration.hostPool.scalePlan.exclusionTag
 
 
-// Azure Virtual Desktop Monitoring Configuration
+// Azure Virtual Desktop Application Groups Configuration
+var desktopApplicationGroupName = avdConfiguration.applicationGroups.desktopAppGroup.name
+var remoteAppApplicationGroupName = avdConfiguration.applicationGroups.remoteAppGroup.name
+var deployDesktopApplicationGroupDiagnostics = avdConfiguration.applicationGroups.remoteAppGroup.deployDiagnostics
+var deployRemoteAppApplicationGroupDiagnostics = avdConfiguration.applicationGroups.remoteAppGroup.deployDiagnostics
+var appsListInfo = avdConfiguration.applicationGroups.remoteAppGroup.apps
 
-var deployHostPoolDiagnostics = avdConfiguration.monitoring.deployHostPoolDiagnostics
-var deployDesktopApplicationGroupDiagnostics = avdConfiguration.monitoring.deployDesktopDiagnostics
-var deployRemoteAppApplicationGroupDiagnostics = avdConfiguration.monitoring.deployRemoteAppDiagnostics
 
 /* 
   AVD Resource Group deployment 

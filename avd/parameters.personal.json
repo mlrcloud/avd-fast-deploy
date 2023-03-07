@@ -86,7 +86,7 @@
           "vnetName": "vnet-avd",
           "subnetName": "snet-hp-data-pers"
         },
-        "hostpoolRegistration": {
+        "hostPoolRegistration": {
           "artifactsLocation": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/"
         }
       }
@@ -123,16 +123,17 @@
             }
           }
         },
-        "hostpool": {
+        "hostPool": {
           "addHosts": true,
           "name": "hp-data-pers",
           "instances": 1,
           "currentInstances": 0,
           "type": "Personal",
           "assignmentType": "Automatic",
-          "maxSessions": 10,
+          "maxSessions": 1,
           "rdpProperties": "audiocapturemode:i:0;audiomode:i:0;drivestoredirect:s:;redirectclipboard:i:0;redirectcomports:i:0;redirectprinters:i:0;redirectsmartcards:i:0;screen mode id:i:2;targetisaadjoined:i:1",
           "tokenExpirationTime": "03/05/2023 8:55:50 AM",
+          "deployDiagnostics": true,
           "scalePlan": {
             "enabled": false,
             "name": "NA",
@@ -140,7 +141,6 @@
             "exclusionTag": "",
             "schedules": []
           },
-          "apps": [],
           "privateLink": {
             "deployPrivateLink": true,
             "privateEndpointName": "plink-hp-avd-datapers",
@@ -150,10 +150,16 @@
             "publicNetworkAccess": "Enabled"
           }
         },
-        "monitoring": {
-          "deployHostPoolDiagnostics": true,
-          "deployDesktopDiagnostics": true,
-          "deployRemoteAppDiagnostics": true
+        "applicationGroups": {
+            "desktopAppGroup": {
+              "name": "hp-data-pers-dag",
+              "deployDiagnostics": true
+            },
+            "remoteAppGroup": {
+              "name": "NA",
+              "deployDiagnostics": false,
+              "apps": []
+            }
         }
       }
     }
