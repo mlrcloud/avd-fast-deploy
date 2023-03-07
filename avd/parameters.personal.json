@@ -140,7 +140,6 @@
             "exclusionTag": "",
             "schedules": []
           },
-          "existingApplicationGroupIds": [],
           "apps": [],
           "privateLink": {
             "deployPrivateLink": true,
@@ -152,7 +151,6 @@
           }
         },
         "monitoring": {
-          "deployWorkspaceDiagnostics": true,
           "deployHostPoolDiagnostics": true,
           "deployDesktopDiagnostics": true,
           "deployRemoteAppDiagnostics": true

@@ -79,68 +79,42 @@ If you don't want to use any of the base Bicep templates for networking resource
 ### Personal pool scenario
 The following parameters are required to deploy *personal pool* scenario:
 
-- *roleDefinitions.X.principalId*
-  - "type": "string",
-  - "description": "Replace this GUID with the Object ID of the Windows Virtual Desktop application created by default inside your Azure Active Directory."
-
-- *avdConfiguration.workSpace.tokenExpirationTime*
-  - "type": "string",
-  - "description": "Modify the expiration time between one hour ahead or 30 days of the actual time".
+| Parameter | Type | Description | Default value |
+| *roleDefinitions.X.principalId* | string | Replace this GUID with the Object ID of the Windows Virtual Desktop application created by default inside your Azure Active Directory. | 26da2792-4d23-4313-b9e7-60bd7c1bf0b1 |
+| *avdConfiguration.workSpace.tokenExpirationTime* | string | Modify the expiration time between one hour ahead or 30 days of the actual time. | 03/05/2023 8:55:50 AM |
 
 *The default parameter file contains all the possible options available in this environment. We recommend to adjust only the values of the parameters described here.*
 
-- *location*
-  - "type": "string",
-  - "description": "Allows to configure the Azure region where the resources should be deployed."
+| Parameter | Type | Description | Default value |
+| *location* | string | Allows to configure the Azure region where the resources should be deployed. | westeurope |
+| *resourceGroupNames* | string | Allows to configure the specific resource group where the resources associated to that serice would be deployed. You can define the same resource group name for all resources in a test environment to simplify management and deletion after finishing with the evaluation. | "monitoring": "rg-monitor", "avdNetworking": "rg-avd", "avd": "rg-avd-hp-data-pers", "shared": "rg-shared" |
+| *deployFromScratch* | bool | If you are creating a new Azure Virtual Desktop environment you should keep this value as true. It would create all the required resources. If you already has an environment deployed and the only thing you want is to add new pools, change it to false. | true |
+| *monitoringOptions.newOrExistingLogAnalyticsWorkspaceName* | string | If you want to use an existing Log Analytics Workspace make sure that the correct name is configured in this parameter. | law-demo |
+| *monitoringOptions.diagnosticsStorageAccountName* | string | Storage account name for Diagnostic extension. | sadiagdataavd |
+| *vmConfiguration.aadLogin* | bool | If you want to join VM to AAD you should keep this value as `true`. In case you keep this value as `false`, you should configure the domainConfiguration parameters. | true |
+| *vmConfiguration.prefixName* | string | Provide the prefix name for your session hosts. | vmshdataps |
+| *vmConfiguration.sku* | string | Select the instance type that best meets the performance requirements of your session hosts. | Standard_DS3_V2 |
+| *vmConfiguration.redundancy* | string | Select either availabilityZone or availabilitySet. | availabilityZone |
+| *vmConfiguration.availabilityZones* | array | Indicate the number of AZs to which you want to spread your session hosts. In case you use availabilitySet, this parameter is ignored. | [1,2,3] |
+| *vmConfiguration.adminUsername* | string | User name of the local admin configured in every virtual machine deployed. | azureAdmin |
+| *vmConfiguration.image.imageId* | string | Indicate a `imageId` of an already deployed image version from an Azure Gallery. In case you want to use a custom image, you should keep this value empty and indicate the `imageOffer`, `imageSKU`, `imagePublisher` and `imageVersion` parameters. | "imageId": "/subscriptions/XXXXXXXXXXXXX/resourceGroups/rg-images/providers/Microsoft.Compute/galleries/gallery/images/WVD10_Pers_Definition/versions/1.0.0", "imageOffer": "Windows-10", "imageSKU": "20h2-ent", "imagePublisher": "MicrosoftWindowsDesktop", "imageVersion": "latest" | 
+| *vmConfiguration.domainConfiguration* | object | Modify the properties in this object to adjust it to your current Active Directoy Domain details. | "name":  "mydomain.local", "ouPath": "OU=Personal,OU=AVD,DC=mydomain,DC=local", "vmJoinUserName": "azureAdmin" |
+| *vmConfiguration.networkConfiguration* | object | Provide the names of the vnet and subnet where session hosts will be deployed. | "vnetName": "vnet-avd", "subnetName": "snet-avd-hp-data-pers" |
+| *avdConfiguration.workspaces.placeholderWorkspace.deployWorkspace* | bool | If you want to deploy a placeholder workspace for initial feed discovery through a private endpoint, you should keep this value as `true`. In case you already have a placeholder workspace deployed or you don't want to use private endpoint for initial feed discovery, you should keep this value as `false` and the rest of the parameters in this object will be ignored. | true |
+| *avdConfiguration.workspaces.placeholderWorkspace.name* | string | Provide a name for the placeholder workspace. | ws-placeholder |
+| *avdConfiguration.workspaces.placeholderWorkspace.deployDiagnostics* | bool | If you want to sent the diagnostic logs to Log Analytics Workspace, you should keep this value as `true`. | true |
+| *avdConfiguration.workspaces.placeholderWorkspace.privateLink* | object | If you want to use the placeholder workspace for initial feed discovery through a private endpoint, you should keep *deployPrivateLink* value as `true`. In case you keep this value as `false`, initial feed discovery flow will be done through the public endpoint and the rest of the parameters in this object will be ignored. | "deployPrivateLink": true |
+| *avdConfiguration.workspaces.placeholderWorkspace.privateLink.publicNetworkAccess* | string | `Enabled` allows the placeholder workspace to be accessed from both public and private networks, `Disabled` allows the placeholder workspace to only be accessed via private endpoints. | Enabled |
+| *avdConfiguration.workspaces.feedWorkspace.deployWorkspace* | bool | If you want to deploy a feedWorkspace workspace for feed download through a private endpoint, you should keep this value as `true`. In case you already have a feedWorkspace workspace deployed, you should keep this value as `false` and the rest of the parameters in this object will be ignored. | true |
+| *avdConfiguration.workspaces.feedWorkspace.name* | string | Provide a name for the feed workspace. | ws-avd-datapers |
+| *avdConfiguration.workspaces.feedWorkspace.deployDiagnostics* | bool | If you want to sent the diagnostic logs to Log Analytics Workspace, you should keep this value as `true`. | true |
+| *avdConfiguration.workspaces.feedWorkspace.privateLink* | object | If you want to enable feed download through private endpoint, you should keep *deployPrivateLink* value as `true`. In case you keep this value as `false`, the private endpoint will not be deployed and this workflow will be done through the public endpoint, and the rest of the parameters in this object will be ignored. | "deployPrivateLink": true |
+| *avdConfiguration.workspaces.feedWorkspace.privateLink.publicNetworkAccess* | string | `Enabled` allows the feed workspace to be accessed from both public and private networks, `Disabled` allows the feed workspace to only be accessed via private endpoints. | Enabled |
+| *avdConfiguration.hostpool.addHosts* | bool | If you already has an environment deployed and the only thing you want is to add new session hosts, you should keep this value as `true`. In case you keep this value as `false`, new session hosts will not be provisioned and the rest of the parameters in this object will be ignored. | true |
+| *avdConfiguration.hostpool.name* | string | Provide a name for the hostpool. | hp-data-pers |
+| *avdConfiguration.hostpool.instances* | string | Provide the number of session hosts you want to deploy. | 1 |
+| *avdConfiguration.hostpool.currentInstances* | string | Provide the current number of session hosts in the hostpool. | 0 |
+| *avdConfiguration.hostpool.type* | string | Select the type of hostpool you want to deploy. | Personal |
+| *avdConfiguration.hostpool.assignmentType* | string | Select the assignment type of the hostpool. | Automatic |
 
-- *resourceGroupNames*
-  - "type": "string",
-  - "description": "Allows to configure the specific resource group where the resources associated to that serice would be deployed. You can define the same resource group name for all resources in a test environment to simplify management and deletion after finishing with the evaluation."
 
-- *deployFromScratch*
-  - "type": "bool",
-  - "description": "If you are creating a new Azure Virtual Desktop environment you should keep this value as true. It would create all the required resources. If you already has an environment deployed and the only thing you want is to add new pools, change it to false."
-
-- *monitoringOptions.newOrExistingLogAnalyticsWorkspaceName*
-  - "type": "string",
-  - "description": "If you want to use an existing Log Analytics Workspace make sure that the correct name is configured in this parameter."
-
-- *monitoringOptions.diagnosticsStorageAccountName*
-  - "type": "string",
-  - "description": "Storage account name for Diagnostic extension."
-  
-- *vmConfiguration.aadLogin*
-  - "type": "bool",
-  - "description": "If you want to join VM to AAD you should keep this value as `true`. In case you keep this value as `false`, you should configure the domainConfiguration parameters."
-
-- *vmConfiguration.prefixName*
-  - "type": "string",
-  - "description": "Provide the prefix name for your session hosts."
-
-- *vmConfiguration.sku*
-  - "type": "string",
-  - "description": "Select the instance type that best meets the performance requirements of your session hosts."
-
-- *vmConfiguration.redundancy*
-  - "type": "string",
-  - "description": "Select either availabilityZone or availabilitySet."
-
-- *vmConfiguration.availabilityZones*
-  - "type": "array",
-  - "description": "Indicate the number of AZs to which you want to spread your session hosts. In case you use availabilitySet, this parameter is ignored."
-
-- *vmConfiguration.adminUsername*
-  - "type": "string",
-  - "description": "User name of the local admin configured in every virtual machine deployed."
-
-- *vmConfiguration.image.imageId*
-  - "type": "string",
-  - "description": "Indicate a `imageId` of an already deployed image version from an Azure Gallery. In case you want to use a custom image, you should keep this value empty and indicate the `imageOffer`, `imageSKU`, `imagePublisher` and `imageVersion` parameters."
-
-- *vmConfiguration.domainConfiguration*
-  - "type": "object",
-  - "description": "Modify the properties in this object to adjust it to your current Active Directoy Domain details.
-
-- *vmConfiguration.networkConfiguration*
-  - "type": "object",
-  - "description": "Provide the names of the vnet and subnet where session hosts will be deployed.
