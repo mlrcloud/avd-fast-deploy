@@ -87,6 +87,7 @@ The following parameters are required to deploy *personal pool* scenario:
 *The default parameter file contains all the possible options available in this environment. We recommend to adjust only the values of the parameters described here.*
 
 | Parameter | Type | Description | Default value |
+| ------------- | ------------- | ------------- | ------------- |
 | *location* | string | Allows to configure the Azure region where the resources should be deployed. | westeurope |
 | *resourceGroupNames* | string | Allows to configure the specific resource group where the resources associated to that serice would be deployed. You can define the same resource group name for all resources in a test environment to simplify management and deletion after finishing with the evaluation. | "monitoring": "rg-monitor", "avdNetworking": "rg-avd", "avd": "rg-avd-hp-data-pers", "shared": "rg-shared" |
 | *deployFromScratch* | bool | If you are creating a new Azure Virtual Desktop environment you should keep this value as true. It would create all the required resources. If you already has an environment deployed and the only thing you want is to add new pools, change it to false. | true |
