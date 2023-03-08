@@ -136,7 +136,7 @@
             "enabled": false,
             "name": "sp-hp-data-pool",
             "timeZone": "Romance Standard Time",
-            "exclusionTag": "",
+            "exclusionTag": "excludeFromScaling",
             "schedules": [
               {
                 "name": "weekdays_schedule",
@@ -176,12 +176,12 @@
         },
         "applicationGroups": {
           "desktopAppGroup": {
-            "name": "hp-data-pers-dag",
+            "name": "hp-data-pool-dag",
             "deployDiagnostics": true
           },
           "remoteAppGroup": {
-            "name": "NA",
-            "deployDiagnostics": false,
+            "name": "hp-data-pool-rag",
+            "deployDiagnostics": true,
             "apps": [
               {
                 "remoteAppApplicationName": "Word",
@@ -255,7 +255,7 @@
               }
             ]
           }
-      }
+        }
       }
     }
   }
