@@ -14,6 +14,7 @@ param resourceGroupNames object
 
 var avdImagesResourceGroupName = resourceGroupNames.images
 
+param deployIdentityResources bool
 
 /* 
   AVD Images Resource Group deployment 
@@ -27,15 +28,17 @@ resource avdImagesResourceGroup 'Microsoft.Resources/resourceGroups@2021-01-01' 
 /* 
   Identity resources deployment 
 */
+param userManagedIdentities object
 
-var imageBuilderIdentityName = 'imageBuilderIdentityAVD'
+var imageBuilderIdentityName = userManagedIdentities.imageBuilderIdentity.name
+var deploymentScriptIdentityName = userManagedIdentities.deploymentScriptIdentity.name
+
 @description('Role definitions for Image Builder and Deployment Script entities')
 param roleDefinitions object 
-var deploymentScriptIdentityName = 'deploymentScriptAvdImage'
 var imageBuilderRoleInfo = roleDefinitions.imageBuilderRole
 var deploymentScriptRoleInfo = roleDefinitions.avdDeploymentScriptRole
 
-module imageBuilderIdentityResources '../modules/Microsoft.Authorization/userAssignedIdentity.bicep' = {
+module imageBuilderIdentityResources '../modules/Microsoft.Authorization/userAssignedIdentity.bicep' = if (deployIdentityResources) {
   scope: avdImagesResourceGroup
   name: 'imageBuilderIdentityRss_Deploy'
   params: {
@@ -45,7 +48,7 @@ module imageBuilderIdentityResources '../modules/Microsoft.Authorization/userAss
   }
 }
 
-module deploymentScriptIdentityResources '../modules/Microsoft.Authorization/userAssignedIdentity.bicep' = {
+module deploymentScriptIdentityResources '../modules/Microsoft.Authorization/userAssignedIdentity.bicep' = if (deployIdentityResources) {
   scope: avdImagesResourceGroup
   name: 'deploymentScriptIdentityRss_Deploy'
   params: {
@@ -55,7 +58,7 @@ module deploymentScriptIdentityResources '../modules/Microsoft.Authorization/use
   }
 }
 
-module imageBuilderRoleResources '../modules/Microsoft.Authorization/roleBeta.bicep' = {
+module imageBuilderRoleResources '../modules/Microsoft.Authorization/roleBeta.bicep' = if (deployIdentityResources) {
   scope: avdImagesResourceGroup
   name: 'imageBuilderRoleRss_Deploy'
   params: {
@@ -66,7 +69,7 @@ module imageBuilderRoleResources '../modules/Microsoft.Authorization/roleBeta.bi
   }
 }
 
-module deploymentScriptRoleResources '../modules/Microsoft.Authorization/roleBeta.bicep' = {
+module deploymentScriptRoleResources '../modules/Microsoft.Authorization/roleBeta.bicep' = if (deployIdentityResources) {
   scope: avdImagesResourceGroup
   name: 'deploymentScriptRoleRss_Deploy'
   params: {
@@ -80,12 +83,12 @@ module deploymentScriptRoleResources '../modules/Microsoft.Authorization/roleBet
 /* 
   Gallery resources deployment 
 */
-
 param galleryProperties object
 var galleryName = galleryProperties.name
+var deployGallery = galleryProperties.deploy
 //var gallerySoftDelete = galleryProperties.softDelete // It is in preview.
 
-module galleryResources '../modules/Microsoft.Compute/gallery.bicep' = {
+module galleryResources '../modules/Microsoft.Compute/gallery.bicep' = if (deployGallery) {
   scope: avdImagesResourceGroup
   name: 'galleryRss_Deploy'
   params: {
@@ -102,7 +105,7 @@ module galleryResources '../modules/Microsoft.Compute/gallery.bicep' = {
 
 param imagesInfo object
 
-module imageResources '../modules/Microsoft.Compute/image.bicep' = [ for image in items(imagesInfo): {
+module imageResources '../modules/Microsoft.Compute/image.bicep' = [ for image in items(imagesInfo): if (image.value.imageDefinitionProperties.deploy) {
   scope: avdImagesResourceGroup
   name: 'imageRssFor${image.value.imageDefinitionProperties.name}_${uniqueString(image.value.imageDefinitionProperties.name)}_Deploy'
   params: {
@@ -121,15 +124,16 @@ module imageResources '../modules/Microsoft.Compute/image.bicep' = [ for image i
 Image Template resources deployment
 */
 
-param updateImageTemplate bool
-
-module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if (updateImageTemplate) {
+module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.deploy) {
   scope: avdImagesResourceGroup
   name: 'imageTemplateRssFor${image.value.imageTemplateProperties.name}_${uniqueString(image.value.imageTemplateProperties.name)}_Deploy'
   params: {
     name: image.value.imageTemplateProperties.name
     location: location
     tags: tags
+    vnetName: image.value.imageTemplateProperties.vmProfile.vnetName
+    subnetName: image.value.imageTemplateProperties.vmProfile.subnetName
+    resourceGroupName: image.value.imageTemplateProperties.vmProfile.resourceGroupName
     imageBuilderIdentityName: imageBuilderIdentityName
     galleryName: galleryName
     imageDefinitionName: image.value.imageDefinitionProperties.name
@@ -138,7 +142,7 @@ module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTe
     imageVersion: image.value.imageTemplateProperties.version
     runOutputName: image.value.imageTemplateProperties.runOutputName
     artifactsTags: image.value.imageTemplateProperties.artifactTags
-    replicationRegions: image.value.imageTemplateProperties.replicationRegions    
+    replicationRegions: image.value.imageTemplateProperties.replicationRegions  
   }
   dependsOn: [
     imageResources
@@ -152,7 +156,7 @@ Image Template creation deployment
 
 param forceUpdateTag string = newGuid()
 
-module imageTemplateBuildResources '../modules/Microsoft.Resources/deploymentScript.bicep' = [ for image in items(imagesInfo): {
+module imageTemplateBuildResources '../modules/Microsoft.Resources/deploymentScript.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.startImageBuild && image.value.imageTemplateProperties.deploy) {
   scope: avdImagesResourceGroup
   name: 'imageTemplateBuildRssFor${image.value.imageTemplateProperties.name}_${uniqueString(image.value.imageTemplateProperties.name)}_Deploy'
   params: {

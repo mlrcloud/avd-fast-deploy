@@ -2,6 +2,9 @@
 param location string = resourceGroup().location
 param tags object
 param name string
+param vnetName string
+param subnetName string
+param resourceGroupName string
 param imageBuilderIdentityName string
 param galleryName string
 param imageDefinitionName string
@@ -11,6 +14,16 @@ param imageVersion string
 param runOutputName string
 param replicationRegions array
 param artifactsTags object
+
+resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' existing = {
+  name: vnetName
+  scope: resourceGroup(resourceGroupName)
+}
+
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
+  name: subnetName
+  parent: vnet
+}
 
 resource imageBuilderIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
   name: imageBuilderIdentityName
@@ -40,6 +53,9 @@ resource imageTemplate 'Microsoft.VirtualMachineImages/imageTemplates@2021-10-01
     vmProfile: {
       vmSize: 'Standard_D2as_v4'
       osDiskSizeGB: 127
+      vnetConfig: {
+        subnetId: subnet.id
+      }
     }
     source: source
     customize: customize

@@ -15,6 +15,19 @@
           "images": "rg-images"
         }
       },
+      "deployIdentityResources":{
+        "value": true
+      },
+      "userManagedIdentities": {
+        "value": {
+          "imageBuilderIdentity": {
+            "name": "imageBuilderIdentityAvd"            
+          },
+          "avdDeploymentScriptIdentity": {
+            "name": "deploymentScriptAvdImage"
+          }
+        }
+      },
       "roleDefinitions": {
         "value": {
           "imageBuilderRole": {
@@ -41,17 +54,16 @@
       },
       "galleryProperties": {
         "value": {
+          "deploy": true,
           "name": "gallery",
           "softDelete": false
         }
-      },
-      "updateImageTemplate": {
-        "value": true
       },
       "imagesInfo": {
         "value": {
           "wvd10-pers": {
             "imageDefinitionProperties": {
+              "deploy": true,
               "name": "WVD10_Pers_Definition",
               "offer": "Windows-10",
               "publisher": "MicrosoftWindowsDesktop",
@@ -59,6 +71,8 @@
               "vmGeneration": "V1"        
             },
             "imageTemplateProperties": {
+              "deploy": true,
+              "startImageBuild": true,
               "name": "WVD10Pers-Temp-0223",
               "source" : {
                 "type": "PlatformImage",
@@ -111,11 +125,17 @@
               "replicationRegions": [
                 "westeurope",
                 "northeurope"
-              ]
+              ],
+              "vmProfile": {
+                "vnetName": "imageBuilder-vnet",
+                "subnetName": "default",
+                "resourceGroupName": "rg-images"
+              }
             }
           },
           "wvd10-pool": {
             "imageDefinitionProperties": {
+              "deploy": true,
               "name": "WVD10_Pool_Definition",
               "offer": "Windows-10",
               "publisher": "MicrosoftWindowsDesktop",
@@ -123,6 +143,8 @@
               "vmGeneration": "V1"        
             },
             "imageTemplateProperties": {
+              "deploy": false,
+              "startImageBuild": false,
               "name": "WVD10Pool-Temp-0223",
               "source" : {
                 "type": "PlatformImage",
@@ -198,7 +220,12 @@
               "replicationRegions": [
                 "westeurope",
                 "northeurope"
-              ]
+              ],
+              "vmProfile": {
+                "vnetName": "imageBuilder-vnet",
+                "subnetName": "default",
+                "resourceGroupName": "rg-images"
+              }
             }
           }  
         } 
