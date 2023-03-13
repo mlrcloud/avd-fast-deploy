@@ -4,6 +4,7 @@ param tags object
 param name string
 param vnetName string
 param subnetName string
+param deployVnetConfig bool
 param resourceGroupName string
 param imageBuilderIdentityName string
 param galleryName string
@@ -53,9 +54,9 @@ resource imageTemplate 'Microsoft.VirtualMachineImages/imageTemplates@2021-10-01
     vmProfile: {
       vmSize: 'Standard_D2as_v4'
       osDiskSizeGB: 127
-      vnetConfig: {
+      vnetConfig: (deployVnetConfig) ? {
         subnetId: subnet.id
-      }
+      }: json('null')
     }
     source: source
     customize: customize

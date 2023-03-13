@@ -36,7 +36,7 @@ var deploymentScriptIdentityName = userManagedIdentities.deploymentScriptIdentit
 @description('Role definitions for Image Builder and Deployment Script entities')
 param roleDefinitions object 
 var imageBuilderRoleInfo = roleDefinitions.imageBuilderRole
-var deploymentScriptRoleInfo = roleDefinitions.avdDeploymentScriptRole
+var deploymentScriptRoleInfo = roleDefinitions.deploymentScriptRole
 
 module imageBuilderIdentityResources '../modules/Microsoft.Authorization/userAssignedIdentity.bicep' = if (deployIdentityResources) {
   scope: avdImagesResourceGroup
@@ -131,6 +131,7 @@ module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTe
     name: image.value.imageTemplateProperties.name
     location: location
     tags: tags
+    deployVnetConfig: image.value.imageTemplateProperties.vmProfile.deployVnetConfig
     vnetName: image.value.imageTemplateProperties.vmProfile.vnetName
     subnetName: image.value.imageTemplateProperties.vmProfile.subnetName
     resourceGroupName: image.value.imageTemplateProperties.vmProfile.resourceGroupName

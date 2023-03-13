@@ -23,7 +23,7 @@
           "imageBuilderIdentity": {
             "name": "imageBuilderIdentityAvd"            
           },
-          "avdDeploymentScriptIdentity": {
+          "deploymentScriptIdentity": {
             "name": "deploymentScriptAvdImage"
           }
         }
@@ -40,10 +40,12 @@
               "Microsoft.Compute/galleries/images/versions/write",
               "Microsoft.Compute/images/read",
               "Microsoft.Compute/images/write",
-              "Microsoft.Compute/images/delete"
+              "Microsoft.Compute/images/delete",
+              "Microsoft.Network/virtualNetworks/read",
+              "Microsoft.Network/virtualNetworks/subnets/join/action"
             ]
           },
-          "avdDeploymentScriptRole": {
+          "deploymentScriptRole": {
             "name": "Deployment Script for AVD Images (Custom)",
             "description": "This role will allow Deployment Script Managed Identity to run image build action",
             "actions": [
@@ -127,7 +129,8 @@
                 "northeurope"
               ],
               "vmProfile": {
-                "vnetName": "imageBuilder-vnet",
+                "deployVnetConfig": true,
+                "vnetName": "vnet-imageBuilder",
                 "subnetName": "default",
                 "resourceGroupName": "rg-images"
               }
@@ -222,7 +225,8 @@
                 "northeurope"
               ],
               "vmProfile": {
-                "vnetName": "imageBuilder-vnet",
+                "deployVnetConfig": false,
+                "vnetName": "vnet-imageBuilder",
                 "subnetName": "default",
                 "resourceGroupName": "rg-images"
               }
