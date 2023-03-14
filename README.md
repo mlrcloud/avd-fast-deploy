@@ -78,7 +78,46 @@ If you don't want to use any of the base Bicep templates for networking resource
 
 ## Parameters
 
-### Personal and Pooled scenarios
+### Image Builder parameters
+
+The following parameters are required to deploy images for *personal* and *pooled* scenarios. 
+
+*The default parameter file contains all the possible options available in this environment. We recommend to adjust only the values of the parameters described here based on desired scenario.*
+
+
+| Parameter | Type | Description | Default value |
+| ------------- | ------------- | ------------- | ------------- |
+| *location* | string | Allows to configure the Azure region where the resources should be deployed. | westeurope |
+| *resourceGroupNames* | string | Allows to configure the specific resource group where the resources associated to that serice would be deployed. You can define the same resource group name for all resources in a test environment to simplify management and deletion after finishing with the evaluation. | <br>- "images": "rg-images" |
+| *deployIdentityResources* | bool | If you want to deploy the identity resources, you should keep this value as `true`. In case you keep this value as `false`, the identity resources will not be deployed. | true |
+| *userManagedIdentities* | object | Provide the names of the image builder and deployment script user managed identities. | {"imageBuilderIdentity": {"name": "imageBuilderIdentityAvd"}, "deploymentScriptIdentity": {"name": "deploymentScriptAvdImage"}} |
+| *galleryProperties.deploy* | bool | If you want to deploy the image gallery, you should keep this value as `true`. In case you keep this value as `false`, the image gallery will not be deployed. | true |
+| *galleryProperties.name* | string | Provide a name for the image gallery. | gallery |
+| *galleryProperties.softDelete* | bool | If you want to enable soft delete for the image gallery, you should keep this value as `true`. In case you keep this value as `false`, the soft delete will not be enabled. | false |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.deploy* | bool | If you want to deploy the image definition, you should keep this value as `true`. In case you keep this value as `false`, the image definition will not be deployed. | true |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.name* | string | Provide a name for the image definition. | <br>- **For personal image:** WVD10_Pers_Definition <br>- **For pooled image:** WVD10_Pool_Definition |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.offer* | string | Provide the offer for the image definition. | Windows-10 |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.publisher* | string | Provide the publisher for the image definition. | MicrosoftWindowsDesktop |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.sku* | string | Provide the sku for the image definition. | <br>- **For personal image:** 20h2-ent <br>- **For pooled image:** 20h2-evd |
+| *imagesInfo.`imageShortName`.imageDefinitionProperties.vmGeneration* | string | Provide the vm generation for the image definition. | V1 |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.deploy* | bool | If you want to deploy the image template, you should keep this value as `true`. In case you keep this value as `false`, the image template will not be deployed. | true |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.startImageBuild* | bool | If you want to start the image build, you should keep this value as `true`. In case you keep this value as `false`, the image build will not be started. | true |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.name* | string | Provide a name for the image template. | <br>- **For personal image:** WVD10Pers-Temp-0223 <br>- **For pooled image:** WVD10Pool-Temp-0223 |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.source* | object | Provide the source information for the image template. | <br>- **For personal image:**<br>{"type": "PlatformImage", "publisher": "MicrosoftWindowsDesktop", "offer": "windows-10", "sku": "20h2-ent", "version": "latest"} <br>- **For pooled image:**<br>{"type": "PlatformImage", "publisher": "MicrosoftWindowsDesktop", "offer": "windows-10", "sku": "20h2-evd", "version": "latest"}|
+| *imagesInfo.`imageShortName`.imageTemplateProperties.customize* | array | Provide the list of customizations for the image template. | [{"type": "PowerShell", "name": "CreateBuildPath", "scriptUri": "https://raw.githubusercontent.com/TomHickling/AzureImageBuilder/master/AIBWin10MSImageBuildTeamMedia.ps1" }, { "type": "WindowsRestart", "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\temp\\buildArtifacts\\azureImageBuilderRestart.txt", "restartTimeout": "5m" }, { "type": "PowerShell", "name": "installFsLogix", "runElevated": true, "runAsSystem": true, "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/0_installConfFsLogix.ps1" }, { "type": "WindowsRestart", "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\temp\\buildArtifacts\\azureImageBuilderRestart.txt", "restartTimeout": "5m" }, { "type": "PowerShell", "name": "OptimizeOS", "runElevated": true, "runAsSystem": true, "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/1_Optimize_OS_for_WVD.ps1" }, { "type": "WindowsRestart", "restartCheckCommand": "write-host 'restarting post Optimizations'", "restartTimeout": "5m" }, { "type": "PowerShell", "name": "Install Teams", "runElevated": true, "runAsSystem": true, "scriptUri": "https://raw.githubusercontent.com/azure/azvmimagebuilder/master/solutions/14_Building_Images_WVD/2_installTeams.ps1" }, { "type": "WindowsRestart", "restartCheckCommand": "write-host 'restarting post Teams Install'", "restartTimeout": "5m" }, { "type": "WindowsUpdate", "searchCriteria": "IsInstalled=0", "filters": [ "exclude:$_.Title -like '*Preview*'", "include:$true" ], "updateLimit": 40 }] |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.version* | string | Provide the version for the image template. | 1.0.0 |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.runOutputName* | string | Provide the run output name for the image template. | <br>- **For personal image:** WVD10-Pers-CustomImage <br>- **For pooled image:** WVD10-Pool-CustomImage |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.artifactTags* | object | Provide the artifact tags for the image template. | <br>- "sourceimage": "wvd-10" <br>- "baseosimage": "windows-10" |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.replicationRegions* | array | Provide the list of regions for the image template. | ["westeurope", "northeurope"] |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.vmProfile.deployVnetConfig* | bool | If you want that Image Builder use networking configurations for creating the custom image, you should keep this value as `true`. In case you keep this value as `false`, Image Builder will not use the vnet configuration. | true |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.vmProfile.vnetName* | string | Provide the name of the vnet. | vnet-imageBuilder |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.vmProfile.subnetName* | string | Provide the name of the subnet. | default |
+| *imagesInfo.`imageShortName`.imageTemplateProperties.resourceGroupName* | string | Provide the name of the resource group that contains the vnet. | rg-images |
+
+
+
+
+### AVD parameters for Personal and Pooled scenarios
 The following parameters are required to deploy both *personal* and *pooled* scenarios:
 
 | Parameter | Type | Description | Default value |
@@ -114,7 +153,7 @@ The following parameters are required to deploy both *personal* and *pooled* sce
 | *avdConfiguration.workspaces.feedWorkspace.name* | string | Provide a name for the feed workspace. | ws-avd-datapers | ws-avd-datapool |
 | *avdConfiguration.workspaces.feedWorkspace.deployDiagnostics* | bool | If you want to sent the diagnostic logs to Log Analytics Workspace, you should keep this value as `true`. | true | true |
 | *avdConfiguration.workspaces.feedWorkspace.existingApplicationGroupIds* | array | Provide the application group ids that already exists in the feed workspace. | [] | [] |
-| *avdConfiguration.workspaces.feedWorkspace.privateLink.deployPrivateLink* | object | If you want to enable feed download through private endpoint, you should keep this value as `true`. In case you keep this value as `false`, the private endpoint will not be deployed and this workflow will be done through the public endpoint, and the rest of the parameters in the *privateLink* object will be ignored. | true | true |
+| *avdConfiguration.workspaces.feedWorkspace.privateLink.deployPrivateLink* | bool | If you want to enable feed download through private endpoint, you should keep this value as `true`. In case you keep this value as `false`, the private endpoint will not be deployed and this workflow will be done through the public endpoint, and the rest of the parameters in the *privateLink* object will be ignored. | true | true |
 | *avdConfiguration.workspaces.feedWorkspace.privateLink.privateEndpointName* | string | Provide a name for the private endpoint. | plink-ws-avd-datapers | plink-ws-avd-datapool |
 | *avdConfiguration.workspaces.feedWorkspace.privateLink.publicNetworkAccess* | string | <br>- `Enabled` allows the feed workspace to be accessed from both public and private networks. <br>- `Disabled` allows the feed workspace to only be accessed via private endpoints. | Enabled | Enabled |
 | *avdConfiguration.hostpool.addHosts* | bool | If you already has an environment deployed and the only thing you want is to add new session hosts, you should keep this value as `true`. In case you keep this value as `false`, new session hosts will not be provisioned and the rest of the parameters in this object will be ignored. | true | true |
@@ -131,7 +170,7 @@ The following parameters are required to deploy both *personal* and *pooled* sce
 | *avdConfiguration.hostpool.scalePlan.timeZone* | string | Provide the time zone for the scale plan. | Not applicable to this scenario, so keep the default value. | Romance Standard Time |
 | *avdConfiguration.hostpool.scalePlan.exclusionTag* | string | Provide a tag name for VMs you don't want to include in scaling operations. Though an exclusion tag will exclude the tagged VM from power management scaling operations, tagged VMs will still be considered as part of the calculation of the minimum percentage of hosts. | Not applicable to this scenario, so keep the default value. | excludeFromScaling |
 | *avdConfiguration.hostpool.scalePlan.schedules* | array | Provide the schedule for the scale plan. | Not applicable to this scenario, so keep the default value. | [{"name": "weekdays_schedule", "daysOfWeek": ["Monday","Tuesday", "Wednesday", "Thursday", "Friday"], "rampUpStartTime": "08:00", "rampUpLoadBalancingAlgorithm": "BreadthFirst", "rampUpMinimumHostsPct": 20, "rampUpCapacityThresholdPct": 60, "peakStartTime": "09:00", "peakLoadBalancingAlgorithm": "BreadthFirst",  "rampDownStartTime": "18:00", "rampDownLoadBalancingAlgorithm": "BreadthFirst", "rampDownMinimumHostsPct": 10, "rampDownCapacityThresholdPct": 10, "rampDownWaitTimeMinutes": 30, "rampDownStopHostsWhen": "ZeroSessions", "rampDownNotificationMessage": "You will be logged off in 30 min. Make sure to save your work.", "offPeakStartTime": "19:00", "offPeakLoadBalancingAlgorithm": "DepthFirst", "rampDownForceLogoffUsers": true}] |
-| *avdConfiguration.hostpool.privateLink.deployPrivateLink* | object | If you want to enable private endpoint for hostpool, you should keep this value as `true`. In case you keep this value as `false`, the private endpoint will not be deployed and this workflow will be done through the public endpoint, and the rest of the parameters in the *privateLink* object will be ignored. | true | true |
+| *avdConfiguration.hostpool.privateLink.deployPrivateLink* | bool | If you want to enable private endpoint for hostpool, you should keep this value as `true`. In case you keep this value as `false`, the private endpoint will not be deployed and this workflow will be done through the public endpoint, and the rest of the parameters in the *privateLink* object will be ignored. | true | true |
 | *avdConfiguration.hostpool.privateLink.privateEndpointName* | string | Provide a name for the private endpoint. | plink-hp-avd-datapers | plink-hp-avd-datapool |
 | *avdConfiguration.hostpool.privateLink.publicNetworkAccess* | string | <br>- `Enabled` allows users to connect to the host pool using public internet or private endpoints and Azure Virtual Desktop session hosts will talk to the Azure Virtual Desktop service over public internet or private endpoints. <br>- `Disabled` allows users to only connect to host pool using private endpoints and Azure Virtual Desktop session hosts can only talk to the Azure Virtual Desktop service over private endpoint connections. <br>- `EnabledForSessionHostsOnly` allows Azure Virtual Desktop session hosts to talk to the Azure Virtual Desktop service over public internet or private endpoints. Users can only connect to host pool using private endpoints. <br>- `EnabledForClientsOnly` allows users to connect to the host pool using public internet or private endpoints. Azure Virtual Desktop session hosts can only talk to the Azure Virtual Desktop service over private endpoint connections. | Enabled | Enabled |
 | *avdConfiguration.applicationGroups.desktopAppGroup.name* | string | Provide a name for the desktop application group. | hp-data-pers-dag | hp-data-pool-dag |
@@ -139,7 +178,3 @@ The following parameters are required to deploy both *personal* and *pooled* sce
 | *avdConfiguration.applicationGroups.remoteAppGroup.name* | string | Provide a name for the remote application group. | Not applicable to this scenario, so keep the default value. | hp-data-pool-rag |
 | *avdConfiguration.applicationGroups.remoteAppGroup.deployDiagnostics* | bool | If you want to sent the diagnostic logs to Log Analytics Workspace, you should keep this value as `true`. | Not applicable to this scenario, so keep the default value. | true |
 | *avdConfiguration.applicationGroups.remoteAppGroup.apps* | array | Provide the list of applications you want to deploy in the remote application group. | Not applicable to this scenario, so keep the default value. | Use default value or change it. |
-
-
-
-

@@ -73,8 +73,8 @@
               "vmGeneration": "V1"        
             },
             "imageTemplateProperties": {
-              "deploy": true,
-              "startImageBuild": true,
+              "deploy": false,
+              "startImageBuild": false,
               "name": "WVD10Pers-Temp-0223",
               "source" : {
                 "type": "PlatformImage",
@@ -146,8 +146,8 @@
               "vmGeneration": "V1"        
             },
             "imageTemplateProperties": {
-              "deploy": false,
-              "startImageBuild": false,
+              "deploy": true,
+              "startImageBuild": true,
               "name": "WVD10Pool-Temp-0223",
               "source" : {
                 "type": "PlatformImage",
@@ -157,7 +157,6 @@
                 "version": "latest"
               },
               "customize": [
-                
                 {
                   "type": "PowerShell",
                   "name": "CreateBuildPath",
@@ -225,7 +224,7 @@
                 "northeurope"
               ],
               "vmProfile": {
-                "deployVnetConfig": false,
+                "deployVnetConfig": true,
                 "vnetName": "vnet-imageBuilder",
                 "subnetName": "default",
                 "resourceGroupName": "rg-images"

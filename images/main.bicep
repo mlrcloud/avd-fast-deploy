@@ -124,7 +124,7 @@ module imageResources '../modules/Microsoft.Compute/image.bicep' = [ for image i
 Image Template resources deployment
 */
 
-module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.deploy) {
+module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.deploy && !image.value.imageDefinitionProperties.deploy) {
   scope: avdImagesResourceGroup
   name: 'imageTemplateRssFor${image.value.imageTemplateProperties.name}_${uniqueString(image.value.imageTemplateProperties.name)}_Deploy'
   params: {
@@ -157,7 +157,7 @@ Image Template creation deployment
 
 param forceUpdateTag string = newGuid()
 
-module imageTemplateBuildResources '../modules/Microsoft.Resources/deploymentScript.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.startImageBuild && image.value.imageTemplateProperties.deploy) {
+module imageTemplateBuildResources '../modules/Microsoft.Resources/deploymentScript.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.startImageBuild) {
   scope: avdImagesResourceGroup
   name: 'imageTemplateBuildRssFor${image.value.imageTemplateProperties.name}_${uniqueString(image.value.imageTemplateProperties.name)}_Deploy'
   params: {
