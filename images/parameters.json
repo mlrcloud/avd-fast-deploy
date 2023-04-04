@@ -73,8 +73,8 @@
               "vmGeneration": "V1"        
             },
             "imageTemplateProperties": {
-              "deploy": false,
-              "startImageBuild": false,
+              "deploy": true,
+              "startImageBuild": true,
               "name": "WVD10Pers-Temp-0223",
               "source" : {
                 "type": "PlatformImage",
@@ -130,9 +130,8 @@
               ],
               "vmProfile": {
                 "deployVnetConfig": true,
-                "vnetName": "vnet-imageBuilder",
-                "subnetName": "default",
-                "resourceGroupName": "rg-images"
+                "vnetName": "vnetForWVD10_Pers_Definition",
+                "subnetName": "default"
               }
             }
           },
@@ -225,9 +224,8 @@
               ],
               "vmProfile": {
                 "deployVnetConfig": true,
-                "vnetName": "vnet-imageBuilder",
-                "subnetName": "default",
-                "resourceGroupName": "rg-images"
+                "vnetName": "vnetForWVD10_Pool_Definition",
+                "subnetName": "default"
               }
             }
           }  

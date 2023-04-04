@@ -12,10 +12,6 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-04-01' existing = {
   name: vmName
 }
 
-resource hostpools 'Microsoft.DesktopVirtualization/hostPools@2021-07-12' existing = {
-  name: hostPoolName
-}
-
 resource dscextension 'Microsoft.Compute/virtualMachines/extensions@2018-10-01' = {
   name: name
   parent: vm

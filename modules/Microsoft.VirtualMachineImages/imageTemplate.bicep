@@ -5,7 +5,6 @@ param name string
 param vnetName string
 param subnetName string
 param deployVnetConfig bool
-param resourceGroupName string
 param imageBuilderIdentityName string
 param galleryName string
 param imageDefinitionName string
@@ -18,7 +17,7 @@ param artifactsTags object
 
 resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' existing = {
   name: vnetName
-  scope: resourceGroup(resourceGroupName)
+  scope: resourceGroup()
 }
 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {

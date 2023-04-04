@@ -120,11 +120,39 @@ module imageResources '../modules/Microsoft.Compute/image.bicep' = [ for image i
   ]
 }]
 
+/* 
+  Image Builder vnet resources deployment 
+*/
+
+//param imageBuilderInfo object
+/*
+module imageBuilderVnetResources '../modules/Microsoft.Network/vnet.bicep' = {
+  scope: avdImagesResourceGroup
+  name: 'imageBuilderVnetRss_Deploy'
+  params: {
+    name: imageBuilderInfo.vnetName
+    location: location
+    tags: tags
+    snetName: imageBuilderInfo.subnetName    
+  }
+}
+*/
+module imageBuilderVnetResources '../modules/Microsoft.Network/vnet.bicep' = [ for image in items(imagesInfo): if (image.value.imageDefinitionProperties.deploy) {
+  scope: avdImagesResourceGroup
+  name: 'imageBuilderVnetRssFor${image.value.imageDefinitionProperties.name}_${uniqueString(image.value.imageDefinitionProperties.name)}_Deploy'
+  params: {
+    name: image.value.imageTemplateProperties.vmProfile.vnetName
+    location: location
+    tags: tags
+    snetName: image.value.imageTemplateProperties.vmProfile.subnetName   
+  }
+}]
+
 /*
 Image Template resources deployment
 */
 
-module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if (image.value.imageTemplateProperties.deploy && !image.value.imageDefinitionProperties.deploy) {
+module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTemplate.bicep' = [ for image in items(imagesInfo): if ((image.value.imageTemplateProperties.deploy && !image.value.imageDefinitionProperties.deploy)||(image.value.imageTemplateProperties.deploy && image.value.imageDefinitionProperties.deploy)) {
   scope: avdImagesResourceGroup
   name: 'imageTemplateRssFor${image.value.imageTemplateProperties.name}_${uniqueString(image.value.imageTemplateProperties.name)}_Deploy'
   params: {
@@ -134,7 +162,6 @@ module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTe
     deployVnetConfig: image.value.imageTemplateProperties.vmProfile.deployVnetConfig
     vnetName: image.value.imageTemplateProperties.vmProfile.vnetName
     subnetName: image.value.imageTemplateProperties.vmProfile.subnetName
-    resourceGroupName: image.value.imageTemplateProperties.vmProfile.resourceGroupName
     imageBuilderIdentityName: imageBuilderIdentityName
     galleryName: galleryName
     imageDefinitionName: image.value.imageDefinitionProperties.name
@@ -147,6 +174,7 @@ module imageTemplateResources '../modules/Microsoft.VirtualMachineImages/imageTe
   }
   dependsOn: [
     imageResources
+    imageBuilderVnetResources
   ]
 }]
 
